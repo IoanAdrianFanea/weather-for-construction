@@ -1,0 +1,168 @@
+COMMIT PREFIX GUIDE 
+
+feat:   new functionality or new module
+        (new scenes, runner script, animation, plotting)
+
+style: 
+
+fix:    bug fixes or corrections
+        (wrong plot, incorrect parameter handling, animation bug)
+
+docs:   documentation only
+        (plans, summaries, logs, README updates)
+
+refactor: code changes that do not add features or fix bugs
+          (cleanups, renaming, structure changes)
+
+chore:  maintenance or meta changes
+        (commit style changes, file organisation, gitignore updates)
+
+test:   adding or modifying tests (if applicable)
+
+-------------------------------------------------------------------------
+
+GIT WORKFLOW NOTES (SOLO PROJECT)
+
+BRANCH TYPES
+
+main
+- always stable
+- always runnable
+- demo-ready
+- never commit directly to it
+
+feat/<feature-name>
+- new feature
+- one feature per branch
+- example: feat/upload-pdf
+
+fix/<bug-name>
+- only used if bug is found in main
+- example: fix/upload-validation
+
+chore/<task>
+- config/tooling changes
+- example: chore/add-eslint
+
+docs/<change>
+- documentation updates only
+
+
+STARTING A NEW FEATURE
+
+git checkout main
+git pull
+git checkout -b feat/feature-name
+
+rule:
+always branch from updated main
+
+
+WORKING ON A FEATURE
+
+commit small logical steps
+
+git add .
+git commit -m "Add upload controller"
+
+if feature breaks while building:
+stay on same feature branch
+fix it there
+commit fix normally
+
+DO NOT create a fix branch if feature is not merged yet
+
+
+WHEN TO USE FIX BRANCH
+
+only if:
+- feature was already merged into main
+- bug discovered in stable main
+
+workflow:
+
+git checkout main
+git pull
+git checkout -b fix/bug-name
+
+fix bug
+commit
+push
+open PR
+merge into main
+
+
+IMPORTANT RULES
+
+- never work directly on main
+- always commit or stash before switching branches
+- each branch = one feature
+- main must always run without errors
+- do not mix multiple features in one branch
+- do not create unnecessary branches
+
+
+WHEN TO PULL
+
+use git pull:
+- before creating new branch
+- when switching to main
+- when working on multiple machines
+
+no need to pull:
+- right after your own push
+- if nothing changed remotely
+
+
+TAGS (FOR MILESTONES)
+
+tags mark stable versions
+
+only tag from main
+
+examples:
+v0.1.0  -> first working MVP
+v0.2.0  -> search added
+v1.0.0  -> stable release
+
+create tag:
+
+git checkout main
+git pull
+git tag v0.1.0
+git push origin v0.1.0
+
+use tags for:
+- MVP complete
+- phase complete
+- demo version
+
+
+VERSION STYLE
+
+vMAJOR.MINOR.PATCH
+
+MAJOR = big breaking change
+MINOR = new feature
+PATCH = bug fix
+
+
+MENTAL MODEL
+
+main = stable product
+feat branch = building sandbox
+fix branch = repair for main
+commit = checkpoint
+PR = merge into main
+tag = official milestone
+
+-------------------------------------------------------------------------
+
+🔒 Optional (Very Professional Touch)
+
+Tag the completion of Phase 7:
+
+git tag -a v0.7 -m "Phase 7 - Visualization & CLI complete"
+git push origin v0.7
+
+This makes your project look structure

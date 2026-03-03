@@ -28,6 +28,9 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <div className="min-h-screen flex items-center justify-center text-4xl font-bold">
+      Tailwind works ✅
+    </div>
     </>
   )
 }

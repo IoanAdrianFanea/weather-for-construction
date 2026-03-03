@@ -1,0 +1,92 @@
+# Team Guide — Weather for Construction
+
+## What this project is
+A React-based weather dashboard designed for outdoor construction workers.
+It shows key information quickly: temperature, rain, wind, warnings, and simple safety recommendations.
+
+---
+
+## Technologies We Use (Simple Explanation)
+
+- **React** – Builds the user interface using components.
+- **Vite** – Runs the development server and builds the project.
+- **Tailwind CSS** – Used for styling with utility classes.
+- **OpenWeather API** – Provides weather data.
+- **Browser Geolocation** – Detects the user’s location automatically.
+
+---
+
+## Why We Run `npm install`
+
+When you clone the repository, it does NOT include the `node_modules` folder.
+
+`node_modules` contains all the libraries the project depends on (React, Vite, Tailwind, etc.).
+
+Running:
+
+npm install
+
+- Reads `package.json`
+- Downloads all required dependencies
+- Recreates the `node_modules` folder
+
+Without running `npm install`, the project will not work.
+
+You only need to run it:
+- The first time you clone the project
+- If new dependencies are added
+
+---
+
+## How to Run the Project
+
+1. Install dependencies:
+   npm install
+
+2. Create a `.env` file in the root (already done):
+   VITE_OPENWEATHER_API_KEY=YOUR_KEY_HERE
+
+3. Start the development server:
+   npm run dev
+
+⚠️ Do not commit `.env` (it contains the API key).
+
+---
+
+## Important Files and Folders
+
+### Root
+- `package.json`  
+  Lists project dependencies and scripts.
+- `tailwind.config.js`  
+  Tailwind configuration.
+- `vite.config.js`  
+  Vite configuration.
+
+### src/
+- `main.jsx`  
+  Entry point of the app.
+- `App.jsx`  
+  Main dashboard screen.
+- `index.css`  
+  Global styles and Tailwind directives.
+
+### Planned Structure
+- `src/components/` – Reusable UI components
+- `src/hooks/` – Logic like GPS and weather fetching
+- `src/api/` – OpenWeather request functions
+
+---
+
+## Git Workflow
+
+We do not push directly to `main`.
+
+Steps:
+1. Create a branch:
+   git checkout -b feature/your-task
+
+2. Push it:
+   git push -u origin feature/your-task
+
+3. Open a Pull Request and merge.
