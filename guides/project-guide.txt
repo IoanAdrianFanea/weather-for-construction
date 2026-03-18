@@ -90,3 +90,120 @@ Steps:
    git push -u origin feature/your-task
 
 3. Open a Pull Request and merge.
+
+
+
+---
+
+## How We Will Build the App (Simple Task Breakdown)
+
+We will build the app step-by-step. Each step is small and can be done by one person.
+
+### Step 1 — Basic Layout (UI only)
+Goal: Show a simple dashboard screen
+
+Tasks:
+- Create a main layout in `App.jsx`
+- Add:
+  - Location text (placeholder)
+  - Big temperature text (placeholder)
+  - Section for warnings
+  - Section for extra info (wind, rain)
+- Style using Tailwind
+
+No API yet — just static text.
+
+---
+
+### Step 2 — Get User Location
+Goal: Detect user location (GPS)
+
+Tasks:
+- Use browser geolocation:
+  `navigator.geolocation.getCurrentPosition`
+- Store latitude and longitude
+- Show error if permission denied
+
+---
+
+### Step 3 — Fetch Weather Data
+Goal: Connect to OpenWeather API
+
+Tasks:
+- Create a function in `src/api/openWeather.js`
+- Use `fetch` to get weather using lat/lon
+- Store result in state
+- Show:
+  - Temperature
+  - Weather condition
+
+---
+
+### Step 4 — Display Real Data
+Goal: Replace placeholders with real data
+
+Tasks:
+- Show real temperature
+- Show wind speed
+- Show rain/precipitation
+- Show location name
+
+---
+
+### Step 5 — Add Warnings (Important Feature)
+Goal: Make app useful for construction workers
+
+Tasks:
+- Create simple rules:
+  - High wind → warning
+  - Heavy rain → warning
+  - High temperature → warning
+- Display warning banner
+
+---
+
+### Step 6 — Add Recommendations
+Goal: Help users make decisions
+
+Tasks:
+- Based on weather:
+  - “Strong winds — avoid working at height”
+  - “Heavy rain — slippery surfaces”
+  - “Hot weather — take breaks”
+- Show message on screen
+
+---
+
+### Step 7 — Improve UI
+Goal: Make it clean and easy to read
+
+Tasks:
+- Make temperature large and centered
+- Make warnings stand out (color)
+- Keep everything on one screen
+- Make it readable outdoors
+
+---
+
+### Step 8 — Final Checks
+Goal: Make sure everything works
+
+Tasks:
+- Test on different screen sizes
+- Test when location is denied
+- Test when API fails
+- Fix bugs
+
+---
+
+## Important Rule
+
+Always keep the app:
+- Simple
+- One screen
+- Fast to read
+- Focused on key information only
+
+Do NOT:
+- Add unnecessary features
+- Overcomplicate the UI
