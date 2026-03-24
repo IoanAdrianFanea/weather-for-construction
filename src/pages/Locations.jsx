@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 
 const LocationCard = ({ name, temp, condition, alert }) => (
   <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
@@ -17,37 +18,59 @@ const LocationCard = ({ name, temp, condition, alert }) => (
   </div>
 );
 
-const Locations = () => {
+const Locations = ({ city, onSearchCity, current, loading, error }) => {
+  const [searchValue, setSearchValue] = useState(city || '');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const normalized = searchValue.trim();
+    if (!normalized) return;
+    onSearchCity(normalized);
+  };
+
+  const locationName =
+    current?.name && current?.sys?.country
+      ? `${current.name}, ${current.sys.country}`
+      : city;
+  const condition = current?.weather?.[0]?.description || 'Current conditions unavailable';
+  const temp = Math.round(current?.main?.temp || 0);
+  const windKmh = Math.round((current?.wind?.speed || 0) * 3.6);
+  const alert =
+    windKmh >= 25
+      ? 'Strong winds expected today'
+      : null;
+
   return (
     <div className="p-4 space-y-4">
-      <div className="relative">
+      <form onSubmit={handleSubmit} className="relative">
         <input
           type="text"
-          placeholder="Search job sites..."
-          className="w-full p-3 pl-10 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          placeholder="Search city..."
+          value={searchValue}
+          onChange={(event) => setSearchValue(event.target.value)}
+          className="w-full p-3 pl-10 pr-24 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
           </svg>
         </span>
-      </div>
+        <button
+          type="submit"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white"
+        >
+          Search
+        </button>
+      </form>
+
+      {loading && <p className="text-slate-600 text-sm">Loading location weather...</p>}
+      {error && <p className="text-red-600 text-sm">{error}</p>}
+
       <LocationCard
-        name="Southbank Site A"
-        temp={18}
-        condition="Cloudy with wind"
-        alert="Strong winds expected today"
-      />
-      <LocationCard
-        name="Warehouse - Manchester"
-        temp={9}
-        condition="Heavy Rain"
-        alert="Concrete pour delayed"
-      />
-      <LocationCard
-        name="Skyline Tower - Birmingham"
-        temp={15}
-        condition="Clear Skies"
+        name={locationName}
+        temp={temp}
+        condition={condition}
+        alert={alert}
       />
     </div>
   );

@@ -2,7 +2,7 @@
  * AlertBanner.jsx
  * Used for high-severity warnings
  */
-export const AlertBanner = ({ title, message, type = 'warning' }) => {
+export const AlertBanner = ({ title, type = 'warning' }) => {
   const styles = type === 'warning' ? 'bg-amber-400 text-slate-900' : 'bg-red-500 text-white';
   return (
     <div className={`${styles} px-6 py-4 flex items-center gap-4 mb-6 shadow-md animate-pulse`}>
