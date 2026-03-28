@@ -9,8 +9,10 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
     { id: 'weather',   label: 'Weather',   icon: '☀️' },
     { id: 'locations', label: 'Locations', icon: '🗺️' },
     { id: 'alerts',    label: 'Alerts',    icon: '🔔' },
-    { id: 'settings',  label: 'Settings',  icon: '⚙️' },
     { id: 'safety',    label: 'Safety',    icon: '🦺' },
+    { id: 'forecast',  label: 'Forecast',   icon: '📈'},
+    { id: 'settings',  label: 'Settings',  icon: '⚙️' },
+
   ];
 
   const activeIndex = tabs.findIndex(t => t.id === activeTab);

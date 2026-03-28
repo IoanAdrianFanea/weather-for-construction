@@ -18,13 +18,11 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Oswald', sans-serif !important;
   font-weight: 800;
-  color: #111;
-  margin: 0.5em 0;
 }
+
 *{
   font-family: 'Montserrat', sans-serif !important;
   font-weight: 400;
-
 }
 
 

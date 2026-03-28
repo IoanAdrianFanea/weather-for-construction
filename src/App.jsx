@@ -7,13 +7,13 @@ import Forecast from './pages/Forecast';
 import { Header } from './components/Header';
 import Layout from './components/Layout';
 import { buildFiveDayForecast, getWeatherByCity } from './services/openWeather';
-import { BottomNavigation } from './components/Navigation';
 import { ThemeProvider } from './context/ThemeContext';
+import { usePreferences } from './hooks/usePreference';
 import Safety from './pages/Safety';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
-  const [city, setCity] = useState('London');
+  const { defaultCity, setDefaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit } = usePreferences();
   const [weatherState, setWeatherState] = useState({
     loading: true,
     error: '',
@@ -28,7 +28,7 @@ function App() {
       setWeatherState((previous) => ({ ...previous, loading: true, error: '' }));
 
       try {
-        const data = await getWeatherByCity(city);
+        const data = await getWeatherByCity(defaultCity);
 
         if (ignore) return;
 
@@ -55,12 +55,12 @@ function App() {
     return () => {
       ignore = true;
     };
-  }, [city]);
+  }, [defaultCity]);
 
   const headerLocation =
     weatherState.current?.name && weatherState.current?.sys?.country
       ? `${weatherState.current.name}, ${weatherState.current.sys.country}`
-      : city;
+      : defaultCity;
 
   const projectStatus = (() => {
     const windKmh = Math.round((weatherState.current?.wind?.speed || 0) * 3.6);
@@ -84,16 +84,20 @@ function App() {
             forecast={weatherState.forecast}
             loading={weatherState.loading}
             error={weatherState.error}
+            tempUnit={tempUnit}
+            speedUnit={speedUnit}
           />
         );
       case 'locations':
         return (
           <Locations
-            city={city}
-            onSearchCity={setCity}
+            defaultCity={defaultCity}
+            onSetDefaultCity={setDefaultCity}
             current={weatherState.current}
             loading={weatherState.loading}
             error={weatherState.error}
+            tempUnit={tempUnit}
+            speedUnit={speedUnit}
           />
         );
       case 'alerts':
@@ -105,13 +109,21 @@ function App() {
           />
         );
       case 'settings':
-        return <Settings defaultSite={headerLocation} />;
+        return <Settings
+          defaultCity={defaultCity}
+          tempUnit={tempUnit}
+          setTempUnit={setTempUnit}
+          speedUnit={speedUnit}
+          setSpeedUnit={setSpeedUnit}
+        />;      
       case 'forecast':
         return (
           <Forecast
             forecast={weatherState.forecast}
             loading={weatherState.loading}
             error={weatherState.error}
+            tempUnit={tempUnit}
+            speedUnit={speedUnit}
           />
         );
       case 'safety':
@@ -131,8 +143,7 @@ function App() {
   return (
     <ThemeProvider>
       <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
-        <Header location={headerLocation} projectStatus={projectStatus} setActiveTab={setActiveTab} />
-        {renderPage()}
+<Header location={headerLocation} projectStatus={projectStatus} setActiveTab={setActiveTab} current={weatherState.current} />        {renderPage()}
       </Layout>
     </ThemeProvider>
   );
