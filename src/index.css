@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,13 +9,24 @@
 body {
   @apply bg-white dark:bg-gray-900;
   margin: 0;
-  font-family: 'Oswald', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* FONTS */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Oswald', sans-serif !important;
+  font-weight: 800;
+}
+
+*{
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 400;
+}
+
+
+/* HTML ELEMENTS*/
 a {
   font-weight: 500;
   color: #646cff;
@@ -23,6 +35,7 @@ a {
 a:hover {
   color: #535bf2;
 }
+
 
 h1 {
   font-size: 3.2em;
@@ -54,6 +67,11 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* CUSTOM CLASSES */
+
+.page-title{
+  @apply text-4xl font-bold text-gray-900 dark:text-gray-100;
+}
 
 /*DESKTOP NAV BAR */
 
