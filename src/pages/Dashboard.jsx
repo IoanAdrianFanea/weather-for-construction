@@ -3,17 +3,13 @@ import { ForecastItem } from "../components/ForecastItem";
 import { MetricTile } from "../components/MetricTile";
 import { generateAlerts, alertRules } from "./Alerts";
 import { convertTemp, convertSpeed } from '../utils/units';
-
-export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
-  if (loading) return <div className="p-4 text-slate-600">Loading weather data...</div>;
-  if (error) return <div className="p-4 text-red-600">{error}</div>;
-  if (!current) return <div className="p-4 text-slate-600">No weather data available.</div>;
 import { useEffect, useState } from "react";
 
+
+export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
 /**
  * Dashboard.jsx
  */
-export const Dashboard = ({ current, forecast, loading, error }) => {
   const [weather, setWeather] = useState({ // weather data 
     wind_speed: 10,
     rain_chance: 100,
@@ -30,6 +26,14 @@ export const Dashboard = ({ current, forecast, loading, error }) => {
       })
     }
   }, [current, forecast]);
+
+  useEffect(() => {
+    generateRecommendation(); 
+  }, [weather]); // regenerate recommendations whenever weather data changes
+
+  if (loading) return <div className="p-4 text-slate-600">Loading weather data...</div>;
+  if (error) return <div className="p-4 text-red-600">{error}</div>;
+  if (!current) return <div className="p-4 text-slate-600">No weather data available.</div>;
 
   function generateRecommendation() {
     const recs = []; // generate recommendations based on weather conditions
@@ -61,22 +65,6 @@ export const Dashboard = ({ current, forecast, loading, error }) => {
     setRecommend(recs);  // update recs with new recommendations 
   }
 
-  useEffect(() => {
-    generateRecommendation(); 
-  }, [weather]); // regenerate recommendations whenever weather data changes
-
-
-  if (loading) {
-    return <div className="p-4 text-slate-600">Loading weather data...</div>;
-  }
-
-  if (error) {
-    return <div className="p-4 text-red-600">{error}</div>;
-  }
-
-  if (!current) {
-    return <div className="p-4 text-slate-600">No weather data available.</div>;
-  }
 
   const cityLabel =
     current.name && current.sys?.country
@@ -152,12 +140,6 @@ export const Dashboard = ({ current, forecast, loading, error }) => {
           <MetricTile label="Wind" value={windSpeed} unit={speedLabel} icon={<span className="text-2xl">💨</span>} />
           <MetricTile label="Feels" value={feelsLike} unit={tempLabel} icon={<span className="text-2xl">🌡️</span>} />
         </div>
-
-        <div className="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-blue-500 mb-6 dark:bg-gray-800">
-          <h3 className="font-bold text-slate-800 mb-2 dark:text-slate-200">Recommendation</h3>
-          <p className="text-slate-500 text-sm leading-relaxed">{recommendation}</p>
-        </div>
-       
 
         {/*Dynamic Recommendation*/}
         {recommend.length > 0 && (
