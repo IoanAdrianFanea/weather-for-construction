@@ -69,10 +69,6 @@ export const Dashboard = ({ current, forecast, loading, error }) => {
           <MetricTile label="Rain" value={rainMm.toFixed(1)} unit="mm" icon={<span className="text-2xl">🌧️</span>} />
           <MetricTile label="Wind" value={windKmh} unit="km/h" icon={<span className="text-2xl">💨</span>} />
           <MetricTile label="Feels" value={feelsLike} unit="°" icon={<span className="text-2xl">🌡️</span>} />
-        <div id="quick-metrics" className="grid grid-cols-3 gap-3 mb-6">
-          <MetricTile label="Rain" value="70" unit="%" icon={<span className="text-2xl">🌧️</span>} />
-          <MetricTile label="Wind" value="28" unit="km/h" icon={<span className="text-2xl">💨</span>} />
-          <MetricTile label="Feels" value="16" unit="°" icon={<span className="text-2xl">🌡️</span>} />
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-blue-500 mb-6 dark:bg-gray-800">
