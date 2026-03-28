@@ -27,10 +27,12 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
         ))}
       </div>
 
+
+
       {/* Desktop: left sidebar */}
-      <div className="hidden lg:flex fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-100 flex-col pt-8 px-4 z-50">
+      <div id="desktop-sidebar" className="hidden lg:flex fixed top-0 left-0 h-full w-72 bg-white border-r border-gray-100 flex-col pt-8 px-4 z-50">
         <div className="mb-8 px-2">
-          <h2 className="text-lg font-black text-slate-800">SiteWeather</h2>
+          <h2 className="text-lg font-black text-slate-800 dark:text-slate-200">SiteWeather Desktop</h2>
           <p className="text-xs text-slate-400">Construction Dashboard</p>
         </div>
         {tabs.map(tab => (
@@ -39,8 +41,8 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 w-full text-left transition-colors ${
               activeTab === tab.id
-                ? 'bg-blue-50 text-blue-600 font-bold'
-                : 'text-slate-500 hover:bg-gray-50'
+                ? 'bg-blue-50 text-blue-600 font-bold dark:bg-gray-700 dark:text-blue-400'
+                : 'bg-white text-slate-800 hover:bg-gray-50 hover:text-slate-600 dark:bg-gray-800 dark:text-slate-400 dark:hover:bg-gray-700 dark:hover:text-slate-200'
             }`}
           >
             <span className="text-xl">{tab.icon}</span>
