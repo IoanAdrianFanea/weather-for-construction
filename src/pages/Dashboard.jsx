@@ -35,7 +35,7 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
         : 'Conditions are stable. Continue scheduled outdoor tasks with standard site precautions.';
 
   const weatherData = {
-    windSpeed: windKmh,
+    windSpeed: rawWindKmh,
     rainfall: rainMm,
     temperature: temperature,
   };
