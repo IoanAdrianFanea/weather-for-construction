@@ -6,7 +6,3 @@ A weather dashboard designed for outdoor construction workers.
 
 npm install  
 npm run dev  
-
-Create a .env file with:
-
-VITE_OPENWEATHER_API_KEY=your_key_here
