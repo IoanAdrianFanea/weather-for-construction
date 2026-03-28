@@ -1,11 +1,53 @@
 import { AlertBanner } from "../components/AlertBanner";
 import { ForecastItem } from "../components/ForecastItem";
 import { MetricTile } from "../components/MetricTile";
+import { useEffect, useState } from "react";
 
 /**
  * Dashboard.jsx
  */
 export const Dashboard = () => {
+  const [weather, setWeather] = useState({ // weather data 
+    wind_speed: 10,
+    rain_chance: 100,
+    temperature: 20,
+  });
+
+  const [recommendation, setRecommendation] = useState([]); // safety recommendations based on weather
+  function generateRecommendation() {
+    const recs = []; // generate recommendations based on weather conditions
+    if (weather.wind_speed > 30) { // comparison
+      recs.push({text: "Strong winds expected, avoid high altitude work",
+      icon: "💨"});
+    }
+    if (weather.rain_chance == 100) {
+      recs.push({text: "Rain expected all day, consider rescheduling work or working indoors",
+      icon: "☔"});
+    }
+    else if (weather.rain_chance > 60) {
+      recs.push({text: "High chance of rain, avoid slippery surfaces",
+      icon: "🌧️"});
+    }
+    if (weather.temperature > 25) {
+      recs.push({text: "High temperatures, take breaks and stay hydrated",
+      icon: "🌡️"});
+    }
+    if (weather.wind_speed > 30 && weather.rain_chance > 60 && weather.temperature > 25) {
+      recs.push({text: "Extreme weather conditions, consider pausing work",
+      icon: "⚠️"});
+    }
+    if (weather.wind_speed <= 30 && weather.rain_chance <= 60 && weather.temperature <= 25){
+      recs.push({text: "Weather conditions are favourable for work",
+      icon: "✅"});
+    }
+
+    setRecommendation(recs);  // update recs with new recommendations 
+  }
+
+  useEffect(() => {
+    generateRecommendation(); // run function whenever weather data changes
+  }, [weather]);
+
   return (
     <div>
       {/* Hero Section */}
@@ -34,12 +76,25 @@ export const Dashboard = () => {
           <MetricTile label="Feels" value="16" unit="°" icon={<span className="text-2xl">🌡️</span>} />
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-blue-500 mb-6">
+        {/* Static Recommendation */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-blue-500 mb-6">
           <h3 className="font-bold text-slate-800 mb-2">Recommendation</h3>
           <p className="text-slate-500 text-sm leading-relaxed">
             Secure loose materials before work. High altitude operations should be paused after 14:30 due to increased wind shear risk.
           </p>
         </div>
+
+        {/*Dynamic Recommendation*/}
+        {recommendation.length > 0 && (
+          <div className="bg-red-50 rounded-2xl border-l-4 border-red-500 p-5 mb-6">
+            <h3 className="font-bold text-red-800 mb-2">Safety Recommendations</h3>
+            <ul className="list-disc list-inside text-red-600 text-sm">
+              {recommendation.map((rec, index) => ( // render each recommendation with its icon
+                <li key={index}>{rec.icon} {rec.text}</li> // display recommendation text with corresponding icon
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="mb-6">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-1">5-Day Forecast</h3>
