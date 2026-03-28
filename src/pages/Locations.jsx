@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 
 const LocationCard = ({ name, temp, condition, alert }) => (
   <div className="Item-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700">
@@ -17,7 +18,28 @@ const LocationCard = ({ name, temp, condition, alert }) => (
   </div>
 );
 
-const Locations = () => {
+const Locations = ({ city, onSearchCity, current, loading, error }) => {
+  const [searchValue, setSearchValue] = useState(city || '');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const normalized = searchValue.trim();
+    if (!normalized) return;
+    onSearchCity(normalized);
+  };
+
+  const locationName =
+    current?.name && current?.sys?.country
+      ? `${current.name}, ${current.sys.country}`
+      : city;
+  const condition = current?.weather?.[0]?.description || 'Current conditions unavailable';
+  const temp = Math.round(current?.main?.temp || 0);
+  const windKmh = Math.round((current?.wind?.speed || 0) * 3.6);
+  const alert =
+    windKmh >= 25
+      ? 'Strong winds expected today'
+      : null;
+
   return (
     <div className="p-4 space-y-4">
       <h1 className="page-title text-2xl font-bold text-black dark:text-white">Locations</h1>

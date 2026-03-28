@@ -82,11 +82,23 @@ const generateAlerts = (weather) => {
   return alerts;
 };
 
-export const Alerts = () => {
+export const Alerts = ({ current, loading, error }) => {
+  if (loading) {
+    return <div className="p-4 text-slate-600">Loading alerts...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-600">{error}</div>;
+  }
+
+  if (!current) {
+    return <div className="p-4 text-slate-600">No weather data available for alerts.</div>;
+  }
+
   const weatherData = {
-    windSpeed: 30,
-    rainfall: 4,
-    temperature: 29,
+    windSpeed: Math.round((current.wind?.speed || 0) * 2.23694),
+    rainfall: current.rain?.['1h'] || current.rain?.['3h'] || 0,
+    temperature: Math.round(current.main?.temp || 0),
   };
 
   const alerts = generateAlerts(weatherData);
