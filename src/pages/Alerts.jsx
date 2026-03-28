@@ -7,13 +7,13 @@ const AlertCard = ({ title, time, severity, details }) => {
   };
 
   return (
-    <div className={`rounded-2xl overflow-hidden shadow-sm border ${severity === 'high' ? 'border-red-200' : 'border-yellow-200'}`}>
-      <div className={`${severityStyles[severity]} px-4 py-2`}>
+    <div className={`alert-box rounded-2xl overflow-hidden shadow-sm border ${severity === 'high' ? 'border-red-200 dark:border-red-900' : 'border-yellow-200 dark:border-yellow-900'}`}>
+      <div className={`${severityStyles[severity]} px-4 py-2 flex justify-between items-center`}>
         <h3 className="font-bold text-sm">{title}</h3>
+        <span className="text-xs opacity-75">{time}</span>
       </div>
-      <div className="p-4 bg-white">
-        <p className="text-xs text-slate-500 mb-2">{time}</p>
-        <p className="text-sm text-slate-700">{details}</p>
+      <div className="p-4 bg-white dark:bg-gray-800">
+        <p className="text-sm text-slate-700 dark:text-slate-300">{details}</p>
       </div>
     </div>
   );
@@ -25,62 +25,51 @@ const alertRules = {
       min: 25,
       severity: "high",
       title: "Strong Wind Warning",
-      details: (v) =>
-        `Gusts exceeding ${v} mph expected. Secure loose materials and avoid outdoor tasks.`,
+      details: (v) => `Gusts exceeding ${v} mph expected. Secure loose materials and avoid outdoor tasks.`,
     },
     {
       min: 15,
       severity: "medium",
       title: "Wind Warning",
-      details: (v) =>
-        `Gusts up to ${v} mph expected.`,
+      details: (v) => `Gusts up to ${v} mph expected.`,
     },
   ],
-
   rainfall: [
     {
       min: 10,
       severity: "high",
       title: "Heavy Rain Advisory",
-      details: (v) =>
-        `Heavy rainfall (${v} mm). Slippery conditions expected avoid outdoor tasks.`,
+      details: (v) => `Heavy rainfall (${v} mm). Slippery conditions expected, avoid outdoor tasks.`,
     },
     {
       min: 5,
       severity: "medium",
       title: "Moderate Rain Advisory",
-      details: (v) =>
-        `Rainfall of ${v} mm expected.`,
+      details: (v) => `Rainfall of ${v} mm expected.`,
     },
   ],
-
   temperature: [
     {
       min: 30,
       severity: "high",
       title: "High Temperature Warning",
-      details: (v) =>
-        `Extreme heat at ${v}°C. Stay hydrated and avoid outdoor tasks.`,
+      details: (v) => `Extreme heat at ${v}°C. Stay hydrated and avoid outdoor tasks.`,
     },
     {
       min: 25,
       severity: "medium",
       title: "Warm Temperature Warning",
-      details: (v) =>
-        `Temperature reaching ${v}°C.`,
+      details: (v) => `Temperature reaching ${v}°C.`,
     },
   ],
 };
 
 const generateAlerts = (weather) => {
   const alerts = [];
-
   Object.entries(alertRules).forEach(([key, rules]) => {
     const value = weather[key];
     if (value === undefined) return;
-
     const matchedRule = rules.find(rule => value >= rule.min);
-
     if (matchedRule) {
       alerts.push({
         title: matchedRule.title,
@@ -90,7 +79,6 @@ const generateAlerts = (weather) => {
       });
     }
   });
-
   return alerts;
 };
 
@@ -105,12 +93,11 @@ export const Alerts = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800">
-        Active Alerts
-      </h1>
+      <h1 className="page-title text-2xl font-bold text-black dark:text-white">Active Alerts</h1>
+      <p className="page-title-legend text-sm text-gray-500 -mt-2">Active weather-related alerts for construction sites</p>
 
       {alerts.length === 0 ? (
-        <p>No active alerts</p>
+        <p className="text-sm text-gray-500">No active alerts</p>
       ) : (
         alerts.map((alert, index) => (
           <AlertCard key={index} {...alert} />

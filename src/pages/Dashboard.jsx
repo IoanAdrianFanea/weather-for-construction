@@ -9,11 +9,11 @@ export const Dashboard = () => {
   return (
     <div>
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-blue-400 to-blue-300 pt-12 pb-16 relative overflow-hidden dark:from-gray-700 dark:to-gray-600 rounded-b-3xl mb-8">
+      <div className="bg-gradient-to-b from-blue-400 to-blue-300 pt-12 pb-16 relative overflow-hidden lg:pt-[10%] lg:pb-[10%] dark:from-gray-700 dark:to-gray-600 rounded-b-3xl mb-8">
         <div className="relative z-10 text-center text-white">
           <p className="text-sm font-bold uppercase tracking-[0.2em] opacity-80 mb-2">Southbank Site A, London 📍</p>
           <div className="flex justify-center items-start">
-            <h1 className="text-9xl font-black tracking-tighter">18</h1>
+            <h1 className="text-9xl lg:text-[12rem] font-black tracking-tighter">18</h1>
             <span className="text-4xl font-bold mt-4">°C</span>
           </div>
           <p className="text-2xl font-medium opacity-90">Cloudy with wind</p>

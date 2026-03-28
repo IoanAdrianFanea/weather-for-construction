@@ -5,9 +5,9 @@ import Locations from './pages/Locations';
 import Settings from './pages/Settings';
 import Forecast from './pages/Forecast';
 import { Header } from './components/Header';
-import { BottomNavigation } from './components/Navigation';
 import Layout from './components/Layout';
 import { ThemeProvider } from './context/ThemeContext';
+import Safety from './pages/Safety';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
@@ -24,6 +24,8 @@ function App() {
         return <Settings />;
       case 'forecast':
         return <Forecast />;
+      case 'safety':
+        return <Safety />;
       default:
         return <Dashboard />;
     }
@@ -32,7 +34,7 @@ function App() {
   return (
     <ThemeProvider>
       <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
-        <Header location="Southbank Site A" projectStatus="On Schedule" />
+        <Header location="Southbank Site A" projectStatus="On Schedule" setActiveTab={setActiveTab} />
         {renderPage()}
       </Layout>
     </ThemeProvider>
