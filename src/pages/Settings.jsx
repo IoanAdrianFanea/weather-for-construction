@@ -1,7 +1,31 @@
-import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 
-const Settings = ({ defaultSite }) => {
+const UnitToggle = ({ value, optionA, optionB, labelA, labelB, onChange }) => (
+  <div className="flex rounded-lg overflow-hidden border border-slate-300 dark:border-gray-600">
+    <button
+      onClick={() => onChange(optionA)}
+      className={`px-3 py-1 text-sm font-semibold transition-colors ${
+        value === optionA
+          ? 'bg-blue-500 text-white'
+          : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300'
+      }`}
+    >
+      {labelA}
+    </button>
+    <button
+      onClick={() => onChange(optionB)}
+      className={`px-3 py-1 text-sm font-semibold transition-colors ${
+        value === optionB
+          ? 'bg-blue-500 text-white'
+          : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300'
+      }`}
+    >
+      {labelB}
+    </button>
+  </div>
+);
+
+const Settings = ({ defaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit }) => {
   const { isDark, toggle } = useTheme();
 
   return (
@@ -13,11 +37,21 @@ const Settings = ({ defaultSite }) => {
         <h3 className="page-h2 text-sm font-bold text-slate-600 dark:text-slate-400">Measurement Units</h3>
         <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
           <span className="text-black dark:text-white">Temperature</span>
-          <span className="text-blue-500 font-bold">°C</span>
+          <UnitToggle
+            value={tempUnit}
+            optionA="C" labelA="°C"
+            optionB="F" labelB="°F"
+            onChange={setTempUnit}
+          />
         </div>
         <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
           <span className="text-black dark:text-white">Wind Speed</span>
-          <span className="text-blue-500 font-bold">km/h</span>
+          <UnitToggle
+            value={speedUnit}
+            optionA="kmh" labelA="km/h"
+            optionB="mph" labelB="mph"
+            onChange={setSpeedUnit}
+          />
         </div>
       </div>
 
@@ -30,8 +64,8 @@ const Settings = ({ defaultSite }) => {
           </div>
         </div>
         <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
-          <span className="text-black dark:text-white">Default Site</span>
-          <span className="text-slate-500 dark:text-slate-400">{defaultSite || 'Not set'}</span>
+          <span className="text-black dark:text-white">Default City</span>
+          <span className="text-blue-500 font-semibold">{defaultCity || 'Not set'}</span>
         </div>
         <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
           <span className="text-black dark:text-white">Theme</span>

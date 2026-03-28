@@ -4,69 +4,71 @@ const alertRules = {
   windSpeed: [
     {
       min: 25,
-      severity: "high",
-      title: "Strong Wind Warning",
-      details: (v) => `Gusts exceeding ${v} mph expected. Secure loose materials and avoid outdoor tasks.`,
+      severity: 'high',
+      title: 'Strong Wind Warning',
+      details: (v) => `Gusts exceeding ${v} km/h expected. Secure loose materials and avoid outdoor tasks.`,
     },
     {
       min: 15,
-      severity: "medium",
-      title: "Wind Warning",
-      details: (v) => `Gusts up to ${v} mph expected.`,
+      severity: 'medium',
+      title: 'Wind Advisory',
+      details: (v) => `Winds up to ${v} km/h expected. Monitor conditions on site.`,
     },
   ],
   rainfall: [
     {
       min: 10,
-      severity: "high",
-      title: "Heavy Rain Advisory",
-      details: (v) => `Heavy rainfall (${v} mm). Slippery conditions expected, avoid outdoor tasks.`,
+      severity: 'high',
+      title: 'Heavy Rain Warning',
+      details: (v) => `Heavy rainfall of ${v}mm. Slippery conditions — avoid outdoor tasks.`,
     },
     {
       min: 5,
-      severity: "medium",
-      title: "Moderate Rain Advisory",
-      details: (v) => `Rainfall of ${v} mm expected.`,
+      severity: 'medium',
+      title: 'Rain Advisory',
+      details: (v) => `Rainfall of ${v}mm expected. Take precautions on site.`,
     },
   ],
   temperature: [
     {
       min: 30,
-      severity: "high",
-      title: "High Temperature Warning",
-      details: (v) => `Extreme heat at ${v}°C. Stay hydrated and avoid outdoor tasks.`,
+      severity: 'high',
+      title: 'Extreme Heat Warning',
+      details: (v) => `Temperature at ${v}°C. Stay hydrated and limit outdoor exposure.`,
     },
     {
       min: 25,
-      severity: "medium",
-      title: "Warm Temperature Warning",
-      details: (v) => `Temperature reaching ${v}°C.`,
+      severity: 'medium',
+      title: 'High Temperature Advisory',
+      details: (v) => `Temperature reaching ${v}°C. Ensure workers take regular breaks.`,
     },
   ],
 };
 
-const generateAlerts = (weather) => {
+const generateAlerts = (current) => {
+  if (!current) return [];
+
+  const windKmh = Math.round((current.wind?.speed || 0) * 3.6);
+  const rainfall = current.rain?.['1h'] || current.rain?.['3h'] || 0;
+  const temperature = Math.round(current.main?.temp || 0);
+
+  const values = { windSpeed: windKmh, rainfall, temperature };
   const alerts = [];
+
   Object.entries(alertRules).forEach(([key, rules]) => {
-    const value = weather[key];
-    if (value === undefined) return;
-    const matchedRule = rules.find(rule => value >= rule.min);
-    if (matchedRule) {
+    const value = values[key];
+    const matched = rules.find(rule => value >= rule.min);
+    if (matched) {
       alerts.push({
-        title: matchedRule.title,
-        severity: matchedRule.severity,
-        time: "Now",
-        details: matchedRule.details(value),
+        title: matched.title,
+        severity: matched.severity,
+        time: 'Now',
+        details: matched.details(value),
       });
     }
   });
-  return alerts;
-};
 
-const weatherData = {
-  windSpeed: 30,
-  rainfall: 4,
-  temperature: 29,
+  return alerts;
 };
 
 const AlertCard = ({ title, time, severity, details }) => {
@@ -88,30 +90,24 @@ const AlertCard = ({ title, time, severity, details }) => {
   );
 };
 
-const NotificationModal = ({ onClose }) => {
-  const alerts = generateAlerts(weatherData);
+const NotificationModal = ({ onClose, current }) => {
+  const alerts = generateAlerts(current);
 
-  // Close on Escape
   useEffect(() => {
-    const handler = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
+    const handler = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
   return (
-    // Backdrop
     <div
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Modal */}
       <div
         className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
         onClick={e => e.stopPropagation()}
       >
-        {/* Modal Header */}
         <div className="flex justify-between items-center px-6 py-5 border-b border-gray-100 dark:border-gray-700">
           <div>
             <h2 className="text-lg font-bold text-black dark:text-white">Notifications</h2>
@@ -127,14 +123,15 @@ const NotificationModal = ({ onClose }) => {
           </button>
         </div>
 
-        {/* Alerts List */}
         <div className="overflow-y-auto p-4 space-y-3">
           {alerts.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-8">No active alerts</p>
+            <div className="text-center py-8">
+              <p className="text-3xl mb-2">✅</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">All clear</p>
+              <p className="text-xs text-gray-400 mt-1">No weather alerts for your site right now</p>
+            </div>
           ) : (
-            alerts.map((alert, i) => (
-              <AlertCard key={i} {...alert} />
-            ))
+            alerts.map((alert, i) => <AlertCard key={i} {...alert} />)
           )}
         </div>
       </div>
