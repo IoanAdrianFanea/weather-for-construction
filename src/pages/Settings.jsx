@@ -6,34 +6,35 @@ const Settings = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800">Settings</h1>
-      
+      <h1 className="page-title text-2xl font-bold text-black dark:text-white">Settings</h1>
+      <p className="page-title-legend text-sm text-gray-500 -mt-2">Modify your preferences</p>
+
       <div className="space-y-2">
-        <h3 className="text-sm font-bold text-slate-600">Measurement Units</h3>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex justify-between items-center">
-          <span>Temperature</span>
+        <h3 className="page-h2 text-sm font-bold text-slate-600 dark:text-slate-400">Measurement Units</h3>
+        <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
+          <span className="text-black dark:text-white">Temperature</span>
           <span className="text-blue-500 font-bold">°C</span>
         </div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex justify-between items-center">
-          <span>Wind Speed</span>
+        <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
+          <span className="text-black dark:text-white">Wind Speed</span>
           <span className="text-blue-500 font-bold">km/h</span>
         </div>
       </div>
 
       <div className="space-y-2">
-        <h3 className="text-sm font-bold text-slate-600">Site Preferences</h3>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex justify-between items-center">
-          <span>Safety Alerts</span>
+        <h3 className="page-h2 text-sm font-bold text-slate-600 dark:text-slate-400">Site Preferences</h3>
+        <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
+          <span className="text-black dark:text-white">Safety Alerts</span>
           <div className="w-10 h-5 bg-blue-500 rounded-full relative">
             <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex justify-between items-center">
-          <span>Default Site</span>
-          <span className="text-slate-500">Southbank Site A</span>
+        <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
+          <span className="text-black dark:text-white">Default Site</span>
+          <span className="text-slate-500 dark:text-slate-400">Southbank Site A</span>
         </div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex justify-between items-center">
-          <span>Theme</span>
+        <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
+          <span className="text-black dark:text-white">Theme</span>
           <div
             onClick={toggle}
             className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors duration-200 ${isDark ? 'bg-blue-500' : 'bg-slate-300'}`}

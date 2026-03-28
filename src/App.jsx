@@ -9,6 +9,7 @@ import Layout from './components/Layout';
 import { buildFiveDayForecast, getWeatherByCity } from './services/openWeather';
 import { BottomNavigation } from './components/Navigation';
 import { ThemeProvider } from './context/ThemeContext';
+import Safety from './pages/Safety';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
@@ -106,13 +107,9 @@ function App() {
       case 'settings':
         return <Settings />;
       case 'forecast':
-        return (
-          <Forecast
-            forecast={weatherState.forecast}
-            loading={weatherState.loading}
-            error={weatherState.error}
-          />
-        );
+        return <Forecast />;
+      case 'safety':
+        return <Safety />;
       default:
         return (
           <Dashboard
@@ -128,7 +125,7 @@ function App() {
   return (
     <ThemeProvider>
       <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
-        <Header location={headerLocation} projectStatus={projectStatus} />
+        <Header location="Southbank Site A" projectStatus="On Schedule" setActiveTab={setActiveTab} />
         {renderPage()}
       </Layout>
     </ThemeProvider>
