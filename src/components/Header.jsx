@@ -3,13 +3,13 @@
  * Standard app header with location and profile/notification icon
  */
 export const Header = ({ location, projectStatus }) => (
-  <div className="bg-white px-4 py-4 flex justify-between items-center border-b border-gray-100">
+  <div className="bg-white px-4 py-4 flex justify-between items-center border-b border-gray-100 dark:bg-gray-800 dark:border-gray-700">
     <div className="flex items-center gap-2">
       <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
         <span className="text-orange-600">📍</span>
       </div>
       <div>
-        <h1 className="text-lg font-bold text-gray-900 leading-tight">{location}</h1>
+        <h1 className="text-lg font-bold text-gray-900 dark:text-slate-200 leading-tight">{location}</h1>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{projectStatus}</p>
       </div>
     </div>
