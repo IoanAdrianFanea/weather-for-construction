@@ -1,6 +1,7 @@
 import { AlertBanner } from "../components/AlertBanner";
 import { ForecastItem } from "../components/ForecastItem";
 import { MetricTile } from "../components/MetricTile";
+import { generateAlerts, alertRules } from "./Alerts";
 
 /**
  * Dashboard.jsx
@@ -36,12 +37,18 @@ export const Dashboard = ({ current, forecast, loading, error }) => {
         ? "Heavy rain conditions. Delay concrete pours and increase slip prevention controls."
         : "Conditions are stable. Continue scheduled outdoor tasks with standard site precautions.";
 
-  const alertTitle =
-    windKmh >= 25
-      ? "Strong wind warning"
-      : rainMm >= 10
-        ? "Heavy rain advisory"
-        : "Conditions are currently stable";
+  const weatherData = {
+    windSpeed: windKmh,
+    rainfall: rainMm,
+    temperature: temperature,
+  };
+  const alerts = generateAlerts(weatherData, alertRules);
+  
+  const priority = { high: 3, medium: 2, low: 1 };
+
+  const topAlert = alerts.sort(
+    (a, b) => priority[b.severity] - priority[a.severity]
+  )[0];
 
   return (
     <div>
@@ -61,7 +68,19 @@ export const Dashboard = ({ current, forecast, loading, error }) => {
         <div className="absolute top-12 -right-16 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
       </div>
 
-      <AlertBanner title={alertTitle} type={windKmh >= 25 || rainMm >= 10 ? "danger" : "warning"} />
+      {topAlert ? (
+        <AlertBanner
+          title={topAlert.title}
+          message={topAlert.details}
+          type={topAlert.severity === "high" ? "danger" : "warning"}
+        />
+      ) : (
+        <AlertBanner
+          title="No warnings right now"
+          message="Weather conditions are safe for normal operations."
+          type="warning"
+        />
+      )}
 
       <div className="p-4 -mt-8 relative z-20">
         {/* Quick Metrics */}

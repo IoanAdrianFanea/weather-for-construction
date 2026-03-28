@@ -19,32 +19,32 @@ const AlertCard = ({ title, time, severity, details }) => {
   );
 };
 
-const alertRules = {
+export const alertRules = {
   windSpeed: [
     {
-      min: 25,
+      min: 35,
       severity: "high",
       title: "Strong Wind Warning",
-      details: (v) => `Gusts exceeding ${v} mph expected. Secure loose materials and avoid outdoor tasks.`,
+      details: (v) => `Gusts exceeding ${v} km/h expected. Secure loose materials and avoid outdoor tasks.`,
     },
     {
-      min: 15,
+      min: 25,
       severity: "medium",
-      title: "Wind Warning",
-      details: (v) => `Gusts up to ${v} mph expected.`,
+      title: "Moderate Wind Warning",
+      details: (v) => `Gusts up to ${v} km/h expected.`,
     },
   ],
   rainfall: [
     {
       min: 10,
       severity: "high",
-      title: "Heavy Rain Advisory",
+      title: "Heavy Rain Warning",
       details: (v) => `Heavy rainfall (${v} mm). Slippery conditions expected, avoid outdoor tasks.`,
     },
     {
       min: 5,
       severity: "medium",
-      title: "Moderate Rain Advisory",
+      title: "Moderate Rain Warning",
       details: (v) => `Rainfall of ${v} mm expected.`,
     },
   ],
@@ -56,20 +56,36 @@ const alertRules = {
       details: (v) => `Extreme heat at ${v}°C. Stay hydrated and avoid outdoor tasks.`,
     },
     {
-      min: 25,
+      min: 20,
       severity: "medium",
       title: "Warm Temperature Warning",
       details: (v) => `Temperature reaching ${v}°C.`,
     },
+    {
+      max: 0,
+      severity: "high",
+      title: "Freezing Temperature Warning",
+      details: (v) => `Freezing conditions at ${v}°C. Risk of ice and unsafe surfaces.`,
+    },
+    {
+      max: 5,
+      severity: "medium",
+      title: "Cold Weather Warning",
+      details: (v) => `Cold temperature at ${v}°C. Wear appropriate protective clothing.`,
+    },
   ],
 };
 
-const generateAlerts = (weather) => {
+export const generateAlerts = (weather) => {
   const alerts = [];
   Object.entries(alertRules).forEach(([key, rules]) => {
     const value = weather[key];
     if (value === undefined) return;
-    const matchedRule = rules.find(rule => value >= rule.min);
+      const matchedRule = rules.find(rule => {
+        const minCheck = rule.min === undefined || value >= rule.min;
+        const maxCheck = rule.max === undefined || value <= rule.max;
+      return minCheck && maxCheck;
+      });
     if (matchedRule) {
       alerts.push({
         title: matchedRule.title,
@@ -96,7 +112,7 @@ export const Alerts = ({ current, loading, error }) => {
   }
 
   const weatherData = {
-    windSpeed: Math.round((current.wind?.speed || 0) * 2.23694),
+    windSpeed: Math.round((current.wind?.speed || 0) * 3.6),
     rainfall: current.rain?.['1h'] || current.rain?.['3h'] || 0,
     temperature: Math.round(current.main?.temp || 0),
   };
