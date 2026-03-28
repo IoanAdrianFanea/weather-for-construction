@@ -1,15 +1,14 @@
 import React from 'react';
-import { BottomNavigation } from './BottomNavigation';
+import { BottomNavigation } from './Navigation';
 
 const Layout = ({ children, activeTab, setActiveTab }) => {
   return (
-    <div className="w-full max-w-md mx-auto bg-white min-h-screen flex flex-col">
-      <main className="flex-grow pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <main className="flex-1 lg:ml-72 pb-20 lg:pb-0 bg-gray-50 dark:bg-gray-900">
         {children}
       </main>
-      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   );
 };
-
 export default Layout;

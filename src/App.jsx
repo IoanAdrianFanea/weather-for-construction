@@ -7,6 +7,9 @@ import Forecast from './pages/Forecast';
 import { Header } from './components/Header';
 import Layout from './components/Layout';
 import { buildFiveDayForecast, getWeatherByCity } from './services/openWeather';
+import { BottomNavigation } from './components/Navigation';
+import Layout from './components/Layout';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
@@ -128,6 +131,12 @@ function App() {
       <Header location={headerLocation} projectStatus={projectStatus} />
       {renderPage()}
     </Layout>
+    <ThemeProvider>
+      <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
+        <Header location="Southbank Site A" projectStatus="On Schedule" />
+        {renderPage()}
+      </Layout>
+    </ThemeProvider>
   );
 }
 
