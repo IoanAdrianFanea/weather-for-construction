@@ -50,7 +50,7 @@ export const Dashboard = ({ current, forecast, loading, error }) => {
         <div className="relative z-10 text-center text-white">
           <p className="text-sm font-bold uppercase tracking-[0.2em] opacity-80 mb-2">{cityLabel} 📍</p>
           <div className="flex justify-center items-start">
-            <h1 className="text-9xl lg:text-[12rem] font-black tracking-tighter">18</h1>
+            <h1 className="text-9xl lg:text-[12rem] font-black tracking-tighter">{temperature}</h1>
             <span className="text-4xl font-bold mt-4">°C</span>
           </div>
           <p className="text-2xl font-medium opacity-90 capitalize">{condition}</p>
