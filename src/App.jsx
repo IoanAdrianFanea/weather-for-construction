@@ -105,9 +105,15 @@ function App() {
           />
         );
       case 'settings':
-        return <Settings />;
+        return <Settings defaultSite={headerLocation} />;
       case 'forecast':
-        return <Forecast />;
+        return (
+          <Forecast
+            forecast={weatherState.forecast}
+            loading={weatherState.loading}
+            error={weatherState.error}
+          />
+        );
       case 'safety':
         return <Safety />;
       default:
@@ -125,7 +131,7 @@ function App() {
   return (
     <ThemeProvider>
       <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
-        <Header location="Southbank Site A" projectStatus="On Schedule" setActiveTab={setActiveTab} />
+        <Header location={headerLocation} projectStatus={projectStatus} setActiveTab={setActiveTab} />
         {renderPage()}
       </Layout>
     </ThemeProvider>

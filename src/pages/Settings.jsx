@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 
-const Settings = () => {
+const Settings = ({ defaultSite }) => {
   const { isDark, toggle } = useTheme();
 
   return (
@@ -31,7 +31,7 @@ const Settings = () => {
         </div>
         <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
           <span className="text-black dark:text-white">Default Site</span>
-          <span className="text-slate-500 dark:text-slate-400">Southbank Site A</span>
+          <span className="text-slate-500 dark:text-slate-400">{defaultSite || 'Not set'}</span>
         </div>
         <div className="setting-box bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700 flex justify-between items-center">
           <span className="text-black dark:text-white">Theme</span>
