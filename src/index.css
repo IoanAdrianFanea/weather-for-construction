@@ -69,15 +69,51 @@ button:focus-visible {
 
 /* CUSTOM CLASSES */
 
+/**/
 .page-title{
   @apply text-4xl font-bold text-gray-900 dark:text-gray-100;
 }
 
-/*DESKTOP NAV BAR */
-
-#desktop-sidebar {
-  @apply bg-white dark:bg-gray-800;
+/**/
+.smooth-expand {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
 }
+.smooth-expand.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/**/
+
+.weather-hero{
+  background: 100%;
+}
+
+/**/
+
+.navigation-sidebar {
+  background-color: rgba(223, 220, 255, 0.558); /* light mode — change to your colour */
+}
+
+.dark .navigation-sidebar {
+  background-color: rgb(53, 49, 63); /* dark mode */
+}
+
+
+/**/
+@keyframes grow-left {
+  from { width: 0; opacity: 0; }
+  to   { width: 9rem; opacity: 1; }
+}
+
+.search-grow {
+  animation: grow-left 0.2s ease-out forwards;
+  overflow: hidden;
+}
+
+
 
 
 @media (prefers-color-scheme: light) {

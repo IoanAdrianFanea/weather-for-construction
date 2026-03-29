@@ -57,7 +57,7 @@ const ForecastRow = ({ item, tempUnit, speedUnit }) => {
         onClick={() => setOpen((o) => !o)}
         className="px-4 py-3 flex items-center justify-between cursor-pointer"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ">
           <div className="w-10 flex-shrink-0">
             <p className="text-xs text-slate-400">{item.dateLabel}</p>
             <p className="font-bold text-sm text-slate-800 dark:text-white">{item.day}</p>
