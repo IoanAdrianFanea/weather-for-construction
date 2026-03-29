@@ -1,8 +1,9 @@
 import { useRef } from 'react';
+import logoIcon from '../assets/icons/logo_transparent_fixed.png';
 
 /**
- * BottomNavigation.jsx
- * Floating island-style bottom nav with swipe-to-navigate support
+ * Navigation.jsx
+ * Floating island-style bottom nav (mobile) + left sidebar (desktop)
  */
 export const BottomNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
@@ -10,9 +11,8 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
     { id: 'locations', label: 'Locations', icon: '🗺️' },
     { id: 'alerts',    label: 'Alerts',    icon: '🔔' },
     { id: 'safety',    label: 'Safety',    icon: '🦺' },
-    { id: 'forecast',  label: 'Forecast',   icon: '📈'},
+    { id: 'forecast',  label: 'Forecast',  icon: '📈' },
     { id: 'settings',  label: 'Settings',  icon: '⚙️' },
-
   ];
 
   const activeIndex = tabs.findIndex(t => t.id === activeTab);
@@ -25,7 +25,7 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
   const handleTouchEnd = (e) => {
     if (touchStartX.current === null) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) < 40) return; // ignore small swipes
+    if (Math.abs(diff) < 40) return;
 
     if (diff > 0 && activeIndex < tabs.length - 1) {
       setActiveTab(tabs[activeIndex + 1].id);
@@ -53,7 +53,7 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
           "
           style={{ transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}
         >
-          {tabs.map((tab, i) => {
+          {tabs.map((tab) => {
             const isActive = tab.id === activeTab;
             return (
               <button
@@ -97,15 +97,23 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
         </div>
       </div>
 
-      {/* ── Desktop: left sidebar (unchanged) ── */}
+      {/* ── Desktop: left sidebar ── */}
       <div
         id="desktop-sidebar"
-        className="hidden lg:flex fixed top-0 left-0 h-full w-72 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex-col pt-8 px-4 z-50"
+        className="navigation-sidebar hidden lg:flex fixed top-0 left-0 h-full w-72 border-r border-gray-100 dark:border-gray-700 flex-col pt-8 px-4 z-50"
       >
-        <div className="mb-8 px-2">
-          <h2 className="text-lg font-black text-slate-800 dark:text-slate-200">SiteWeather Desktop</h2>
-          <p className="text-xs text-slate-400">Construction Dashboard</p>
+        <div className="mb-8 px-2 flex items-center gap-2">
+          <img
+            src={logoIcon}
+            alt="SiteWeather logo"
+            className="w-8 h-8 object-contain"
+          />
+          <div>
+            <h2 className="text-lg font-black text-slate-800 dark:text-slate-200">SiteWeather</h2>
+            <p className="text-xs text-slate-400">Construction Dashboard</p>
+          </div>
         </div>
+
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -113,7 +121,7 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
             className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 w-full text-left transition-colors ${
               activeTab === tab.id
                 ? 'bg-blue-50 text-blue-600 font-bold dark:bg-gray-700 dark:text-blue-400'
-                : 'bg-white text-slate-800 hover:bg-gray-50 hover:text-slate-600 dark:bg-gray-800 dark:text-slate-400 dark:hover:bg-gray-700 dark:hover:text-slate-200'
+                : 'text-slate-800 hover:bg-black/5 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200'
             }`}
           >
             <span className="text-xl">{tab.icon}</span>

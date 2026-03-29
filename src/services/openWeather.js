@@ -96,3 +96,18 @@ export const getWeatherByCity = async (city) => {
     forecast,
   };
 };
+
+
+export const getWeatherBackground = (weatherId, dt, sunrise, sunset) => {
+  const isNight = dt < sunrise || dt > sunset;
+
+  if (!weatherId) return '/assets/backgrounds/sky-sunny.gif';
+  if (weatherId >= 200 && weatherId <= 232) return '/assets/backgrounds/sky-thunder.gif';
+  if (weatherId >= 300 && weatherId <= 531) return '/assets/backgrounds/sky-rain.gif';
+  if (weatherId >= 600 && weatherId <= 622) return '/assets/backgrounds/sky-snow.gif';
+  if (weatherId >= 701 && weatherId <= 781) return '/assets/backgrounds/sky-fog.gif';
+  if (weatherId === 800) return isNight ? '/assets/backgrounds/sky-night.gif' : '/assets/backgrounds/sky-sunny.gif';
+  if (weatherId >= 801 && weatherId <= 804) return '/assets/backgrounds/sky-cloudy.gif';
+
+  return '/assets/backgrounds/sky-sunny.gif';
+};
