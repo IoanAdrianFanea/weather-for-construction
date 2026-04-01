@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dashboard } from './pages/Dashboard';
 import { Alerts } from './pages/Alerts';
 import Locations from './pages/Locations';
@@ -14,14 +14,21 @@ import Safety from './pages/Safety';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
-  const { defaultCity, setDefaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit } = usePreferences();
+  const { defaultCity, setDefaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit, alertsEnabled, setAlertsEnabled } = usePreferences();
   const { coords, error: geoError } = useGeolocation();
+  const [userSetCity, setUserSetCity] = useState(false);
   const [weatherState, setWeatherState] = useState({
     loading: true,
     error: '',
     current: null,
     forecast: [],
   });
+
+  // Wrap setDefaultCity so we know the user explicitly chose a city
+  const handleSetDefaultCity = (city) => {
+    setDefaultCity(city);
+    setUserSetCity(true);
+  };
 
   useEffect(() => {
     let ignore = false;
@@ -30,7 +37,7 @@ function App() {
       setWeatherState((previous) => ({ ...previous, loading: true, error: '' }));
 
       try {
-        const shouldUseCoords = coords?.lat && coords?.lon;
+        const shouldUseCoords = !userSetCity && coords?.lat && coords?.lon;
         const data = shouldUseCoords
           ? await getWeatherByCoords(coords.lat, coords.lon)
           : await getWeatherByCity(defaultCity);
@@ -60,7 +67,44 @@ function App() {
     return () => {
       ignore = true;
     };
-  }, [defaultCity, coords?.lat, coords?.lon]);
+  }, [defaultCity, coords?.lat, coords?.lon, userSetCity]);
+
+  // ── Safety alert notifications + persistent banner ──────────────────────
+  const [persistentAlert, setPersistentAlert] = useState(null);
+  const lastNotifiedAlert = useRef(null);
+
+  useEffect(() => {
+    if (!weatherState.current || weatherState.loading) return;
+
+    const windKmh = Math.round((weatherState.current?.wind?.speed || 0) * 3.6);
+    const rainfall = weatherState.current?.rain?.['1h'] || weatherState.current?.rain?.['3h'] || 0;
+    const temp = Math.round(weatherState.current?.main?.temp || 0);
+
+    // Determine the top active alert
+    let topAlert = null;
+    if (windKmh >= 35 || rainfall >= 10 || temp >= 30 || temp <= 0) {
+      topAlert = { severity: 'high', title: windKmh >= 35 ? 'Strong Wind Warning' : rainfall >= 10 ? 'Heavy Rain Warning' : temp >= 30 ? 'High Temperature Warning' : 'Freezing Temperature Warning', body: `Wind: ${windKmh} km/h · Rain: ${rainfall}mm · Temp: ${temp}°C` };
+    } else if (windKmh >= 25 || rainfall >= 5 || temp >= 20 || temp <= 5) {
+      topAlert = { severity: 'medium', title: 'Weather Advisory', body: `Monitor conditions — Wind: ${windKmh} km/h · Temp: ${temp}°C` };
+    }
+
+    // Update persistent banner
+    setPersistentAlert(topAlert);
+
+    // Fire browser notification if enabled and alert changed
+    if (alertsEnabled && topAlert && Notification.permission === 'granted') {
+      const alertKey = topAlert.title + topAlert.body;
+      if (lastNotifiedAlert.current !== alertKey) {
+        lastNotifiedAlert.current = alertKey;
+        new Notification(`⚠️ ${topAlert.title}`, {
+          body: topAlert.body,
+          icon: '/logostandard.png',
+        });
+      }
+    } else if (!topAlert) {
+      lastNotifiedAlert.current = null;
+    }
+  }, [weatherState.current, alertsEnabled]);
 
   const headerLocation =
     weatherState.current?.name && weatherState.current?.sys?.country
@@ -97,7 +141,7 @@ function App() {
         return (
           <Locations
             defaultCity={defaultCity}
-            onSetDefaultCity={setDefaultCity}
+            onSetDefaultCity={handleSetDefaultCity}
             current={weatherState.current}
             loading={weatherState.loading}
             error={weatherState.error}
@@ -120,6 +164,8 @@ function App() {
           setTempUnit={setTempUnit}
           speedUnit={speedUnit}
           setSpeedUnit={setSpeedUnit}
+          alertsEnabled={alertsEnabled}
+          setAlertsEnabled={setAlertsEnabled}
         />;      
       case 'forecast':
         return (
@@ -155,6 +201,14 @@ function App() {
           current={weatherState.current}
           geoError={geoError}
         />
+        {/* Persistent alert banner — shown on all pages when alerts enabled and warning active */}
+        {alertsEnabled && persistentAlert && (
+          <div className={`flex items-center gap-3 px-4 py-2.5 text-sm font-bold ${persistentAlert.severity === 'high' ? 'bg-red-500 text-white' : 'bg-amber-400 text-slate-900'}`}>
+            <span>⚠️</span>
+            <span>{persistentAlert.title}</span>
+            <span className="font-normal opacity-80 text-xs ml-1 hidden sm:inline">{persistentAlert.body}</span>
+          </div>
+        )}
         {renderPage()}
       </Layout>
     </ThemeProvider>
