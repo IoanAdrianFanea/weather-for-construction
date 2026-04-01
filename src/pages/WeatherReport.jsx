@@ -253,9 +253,11 @@ const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'k
         </div>
       </div>
 
+
       {/* ── 1. Temperature ── */}
-      {/* Mobile: rows | Desktop: 4-col grid */}
       <SectionHeader icon="🌡️" title="Temperature" />
+
+      {/* Mobile: rows */}
       <div className="flex flex-col gap-2 mb-6 md:hidden">
         <RowItem label="Actual"     value={convertTemp(tempC,  tempUnit)} unit={tempLabel} />
         <RowItem label="Feels Like" value={convertTemp(feelsC, tempUnit)} unit={tempLabel} sub="Wind & humidity adjusted" />
@@ -264,13 +266,21 @@ const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'k
         {hi !== null && <RowItem label="Heat Index" value={convertTemp(hi, tempUnit)} unit={tempLabel} sub="Apparent temp in shade" highlight />}
         {wc !== null && <RowItem label="Wind Chill" value={convertTemp(wc, tempUnit)} unit={tempLabel} sub="Apparent temp in wind"  highlight />}
       </div>
-      <div className="hidden md:grid grid-cols-4 gap-3 mb-6">
-        <Card label="Actual"     value={convertTemp(tempC,  tempUnit)} unit={tempLabel} />
-        <Card label="Feels Like" value={convertTemp(feelsC, tempUnit)} unit={tempLabel} sub="Wind & humidity adjusted" />
-        <Card label="Min Today"  value={convertTemp(minC,   tempUnit)} unit={tempLabel} />
-        <Card label="Max Today"  value={convertTemp(maxC,   tempUnit)} unit={tempLabel} />
-        {hi !== null && <Card label="Heat Index" value={convertTemp(hi, tempUnit)} unit={tempLabel} sub="Apparent temp in shade" highlight />}
-        {wc !== null && <Card label="Wind Chill" value={convertTemp(wc, tempUnit)} unit={tempLabel} sub="Apparent temp in wind"  highlight />}
+
+      {/* Desktop: 2 rows — row1: 4 cols, row2: heat/chill spanning full */}
+      <div className="hidden md:block mb-6 space-y-3">
+        <div className="grid grid-cols-4 gap-3">
+          <Card label="Actual"     value={convertTemp(tempC,  tempUnit)} unit={tempLabel} />
+          <Card label="Feels Like" value={convertTemp(feelsC, tempUnit)} unit={tempLabel} sub="Wind & humidity adjusted" />
+          <Card label="Min Today"  value={convertTemp(minC,   tempUnit)} unit={tempLabel} />
+          <Card label="Max Today"  value={convertTemp(maxC,   tempUnit)} unit={tempLabel} />
+        </div>
+        {(hi !== null || wc !== null) && (
+          <div className={`grid gap-3 ${hi !== null && wc !== null ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {hi !== null && <Card label="Heat Index" value={convertTemp(hi, tempUnit)} unit={tempLabel} sub="Apparent temp in shade" highlight />}
+            {wc !== null && <Card label="Wind Chill" value={convertTemp(wc, tempUnit)} unit={tempLabel} sub="Apparent temp in wind"  highlight />}
+          </div>
+        )}
       </div>
 
       {/* ── 2. Heat Stress — always rows ── */}

@@ -18,7 +18,7 @@ const getWeatherBackground = (weatherId, dt, sunrise, sunset) => {
   return '/assets/backgrounds/sky-sunny.gif';
 };
 
-export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
+export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh', setActiveTab }) => {
   const [recommend, setRecommend] = useState([]); 
   const activeCurrent = current; // Use the current weather data for recommendations and display
 
