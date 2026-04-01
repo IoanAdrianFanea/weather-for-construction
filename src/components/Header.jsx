@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SearchBar } from './SearchBar';
 import NotificationModal from './NotificationModal';
 
-export const Header = ({ location, projectStatus, setActiveTab, current }) => {
+export const Header = ({ location, projectStatus, setActiveTab, current, geoError }) => {
   const [notifOpen, setNotifOpen] = useState(false);
 
   const windKmh = Math.round((current?.wind?.speed || 0) * 3.6);
@@ -39,6 +39,12 @@ export const Header = ({ location, projectStatus, setActiveTab, current }) => {
           </button>
         </div>
       </div>
+
+      {geoError && (
+        <div className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-xs font-semibold px-4 py-2 border-b border-amber-200 dark:border-amber-800">
+          {geoError}
+        </div>
+      )}
 
       {notifOpen && (
         <NotificationModal

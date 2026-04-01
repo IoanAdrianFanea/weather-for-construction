@@ -85,6 +85,11 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
   const activeCity = displayWeather?.name || selectedCity || defaultCity;
   const isDefault = activeCity?.toLowerCase() === defaultCity?.toLowerCase();
 
+  const deviceCity = current?.name || '';
+  const recommendedCities = deviceCity
+    ? [deviceCity, ...RECOMMENDED_CITIES.filter((city) => city.toLowerCase() !== deviceCity.toLowerCase())]
+    : RECOMMENDED_CITIES;
+
   return (
     <div className="p-4 space-y-4">
       <h1 className="page-title text-2xl font-bold text-black dark:text-white">Locations</h1>
@@ -106,7 +111,7 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
       </form>
 
       <div className="flex flex-wrap gap-2">
-        {RECOMMENDED_CITIES.map((c) => (
+        {recommendedCities.map((c) => (
           <button
             key={c}
             onClick={() => handleSelectCity(c)}
