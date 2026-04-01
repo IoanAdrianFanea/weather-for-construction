@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AlertCard = ({ title, time, severity, details }) => {
+const AlertCard = ({ title, time, severity, details }) => { // Define styles for different severity levels
   const severityStyles = {
     high: 'bg-red-500 text-white',
     medium: 'bg-yellow-400 text-black',
@@ -19,7 +19,7 @@ const AlertCard = ({ title, time, severity, details }) => {
   );
 };
 
-export const alertRules = {
+export const alertRules = { // Define alert rules for different weather parameters
   windSpeed: [
     {
       min: 35,
@@ -31,7 +31,7 @@ export const alertRules = {
       min: 25,
       severity: "medium",
       title: "Moderate Wind Warning",
-      details: (v) => `Gusts up to ${v} km/h expected.`,
+      details: (v) => `Gusts up to ${v} km/h expected.`, 
     },
   ],
   rainfall: [
@@ -77,12 +77,12 @@ export const alertRules = {
 };
 
 export const generateAlerts = (weather) => {
-  const alerts = [];
-  Object.entries(alertRules).forEach(([key, rules]) => {
+  const alerts = []; // Generate alerts based on the defined rules and current weather data
+  Object.entries(alertRules).forEach(([key, rules]) => { // Loop through each weather parameter and its rules
     const value = weather[key];
     if (value === undefined) return;
       const matchedRule = rules.find(rule => {
-        const minCheck = rule.min === undefined || value >= rule.min;
+        const minCheck = rule.min === undefined || value >= rule.min; // Comparisons
         const maxCheck = rule.max === undefined || value <= rule.max;
       return minCheck && maxCheck;
       });
@@ -98,7 +98,7 @@ export const generateAlerts = (weather) => {
   return alerts;
 };
 
-export const Alerts = ({ current, loading, error }) => {
+export const Alerts = ({ current, loading, error }) => { // Displays active alerts
   if (loading) {
     return <div className="p-4 text-slate-600">Loading alerts...</div>;
   }
@@ -112,7 +112,7 @@ export const Alerts = ({ current, loading, error }) => {
   }
 
   const weatherData = {
-    windSpeed: Math.round((current.wind?.speed || 0) * 3.6),
+    windSpeed: Math.round((current.wind?.speed || 0) * 3.6), // Convert values
     rainfall: current.rain?.['1h'] || current.rain?.['3h'] || 0,
     temperature: Math.round(current.main?.temp || 0),
   };

@@ -19,19 +19,18 @@ const getWeatherBackground = (weatherId, dt, sunrise, sunset) => {
 };
 
 export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
-  const [recommend, setRecommend] = useState([]);
+  const [recommend, setRecommend] = useState([]); 
+  const activeCurrent = current; // Use the current weather data for recommendations and display
 
-  const activeCurrent = current;
-
-  const activeWeather = {
+  const activeWeather = { // Convert and round values
     wind_speed: Math.round((activeCurrent?.wind?.speed || 0) * 3.6),
     rain_chance: Math.round((forecast?.[0]?.pop || 0) * 100),
     temperature: Math.round(activeCurrent?.main?.temp || 0),
   };
 
   const generateRecommendation = (aw) => {
-    const recs = [];
-    if (aw.wind_speed >= 35) {
+    const recs = []; // Start with an empty array of recommendations
+    if (aw.wind_speed >= 35) { // Comparisons
       recs.push({ text: "Strong winds expected, avoid high altitude work and secure loose materials", icon: "💨" });
     } else if (aw.wind_speed >= 25) {
       recs.push({ text: "Moderate winds on site, monitor conditions and take care outdoors", icon: "🌬️" });
@@ -57,28 +56,28 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
     if (recs.length === 0) {
       recs.push({ text: "Weather conditions are favourable for work", icon: "✅" });
     }
-    setRecommend(recs);
+    setRecommend(recs); // Update state with the generated recommendations
   };
 
   useEffect(() => {
-    generateRecommendation(activeWeather);
+    generateRecommendation(activeWeather); // Generate recommendations whenever the active weather data changes
   }, [activeCurrent, forecast]);
 
   if (loading) return <div className="p-4 text-slate-600">Loading weather data...</div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
   if (!current) return <div className="p-4 text-slate-600">No weather data available.</div>;
 
-  const cityLabel =
-    activeCurrent.name && activeCurrent.sys?.country
+  const cityLabel = // Format location label
+    activeCurrent.name && activeCurrent.sys?.country // Check if city name and country code are available
       ? `${activeCurrent.name}, ${activeCurrent.sys.country}`
       : activeCurrent.name || 'Unknown location';
 
-  const rawTemp = activeCurrent.main?.temp || 0;
+  const rawTemp = activeCurrent.main?.temp || 0; 
   const rawFeels = activeCurrent.main?.feels_like || rawTemp;
   const rawWindKmh = Math.round((activeCurrent.wind?.speed || 0) * 3.6);
   const rainMm = activeCurrent.rain?.['1h'] || activeCurrent.rain?.['3h'] || 0;
 
-  const temperature = convertTemp(rawTemp, tempUnit);
+  const temperature = convertTemp(rawTemp, tempUnit); // Convert values to certain units
   const feelsLike = convertTemp(rawFeels, tempUnit);
   const windSpeed = convertSpeed(rawWindKmh, speedUnit);
   const tempLabel = tempUnit === 'F' ? '°F' : '°C';
@@ -87,13 +86,13 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
   const condition = activeCurrent.weather?.[0]?.description || 'Current conditions';
 
   const weatherData = {
-    windSpeed: rawWindKmh,
+    windSpeed: rawWindKmh, 
     rainfall: rainMm,
     temperature: Math.round(rawTemp),
   };
   const alerts = generateAlerts(weatherData, alertRules);
 
-  const priority = { high: 3, medium: 2, low: 1 };
+  const priority = { high: 3, medium: 2, low: 1 }; // Define priority levels for alert severity
   const topAlert = alerts.sort((a, b) => priority[b.severity] - priority[a.severity])[0];
 
   const bgGif = getWeatherBackground(

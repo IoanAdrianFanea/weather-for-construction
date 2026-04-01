@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { getWeatherByCity } from '../services/openWeather';
 import { convertTemp, convertSpeed } from '../utils/units';
 
-const RECOMMENDED_CITIES = [
+const RECOMMENDED_CITIES = [ // List of recommended cities
   'London', 'Manchester', 'Birmingham', 'Edinburgh',
   'Glasgow', 'Bristol', 'Leeds', 'Liverpool',
   'Cardiff', 'Newcastle', 'Sheffield', 'Nottingham',
 ];
 
-const LocationCard = ({ name, temp, tempUnit, windSpeed, speedUnit, condition, alert, isDefault, onSetDefault }) => (
+const LocationCard = ({ name, temp, tempUnit, windSpeed, speedUnit, condition, alert, isDefault, onSetDefault }) => ( // Displays weather for a specific location
   <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-gray-700">
     <div className="flex justify-between items-start">
       <div>
@@ -39,20 +39,20 @@ const LocationCard = ({ name, temp, tempUnit, windSpeed, speedUnit, condition, a
 );
 
 const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
-  const [searchValue, setSearchValue] = useState('');
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [cityWeather, setCityWeather] = useState(null);
-  const [cityLoading, setCityLoading] = useState(false);
-  const [cityError, setCityError] = useState('');
+  const [searchValue, setSearchValue] = useState(''); // State for search input
+  const [selectedCity, setSelectedCity] = useState(null); // Currently selected city
+  const [cityWeather, setCityWeather] = useState(null); // Weather data for the selected city
+  const [cityLoading, setCityLoading] = useState(false); // Loading state
+  const [cityError, setCityError] = useState(''); // Error state
 
-  const handleSelectCity = async (cityName) => {
-    setSelectedCity(cityName);
+  const handleSelectCity = async (cityName) => { // Handle city selection and fetch weather data
+    setSelectedCity(cityName); // Set
     setCityLoading(true);
     setCityError('');
     setCityWeather(null);
-    try {
-      const data = await getWeatherByCity(cityName);
-      setCityWeather(data.current);
+    try { // Fetch weather data for the selected city
+      const data = await getWeatherByCity(cityName); // API call to fetch weather by city name
+      setCityWeather(data.current); // Update state
     } catch (e) {
       setCityError(e.message);
     } finally {
@@ -60,21 +60,22 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
     }
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = (e) => { // Handle search
     e.preventDefault();
-    const normalized = searchValue.trim();
+    const normalized = searchValue.trim(); 
     if (!normalized) return;
     handleSelectCity(normalized);
     setSearchValue('');
   };
 
-  const displayWeather = selectedCity ? cityWeather : current;
-  const displayLoading = selectedCity ? cityLoading : loading;
-  const displayError = selectedCity ? cityError : error;
+  const displayWeather = selectedCity ? cityWeather : current; // Weather data to display based on whether a city is selected or not
+  const displayLoading = selectedCity ? cityLoading : loading; // Loading state
+  const displayError = selectedCity ? cityError : error; // Error state
 
+  // Fetch weather for default city on initial load if not already fetched
   const locationName = displayWeather?.name
     ? `${displayWeather.name}, ${displayWeather.sys?.country}`
-    : selectedCity || defaultCity;
+    : selectedCity || defaultCity; // Location label based on available data
   const condition = displayWeather?.weather?.[0]?.description || 'Conditions unavailable';
   const rawTemp = displayWeather?.main?.temp || 0;
   const rawWindKmh = Math.round((displayWeather?.wind?.speed || 0) * 3.6);
@@ -90,6 +91,7 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
     ? [deviceCity, ...RECOMMENDED_CITIES.filter((city) => city.toLowerCase() !== deviceCity.toLowerCase())]
     : RECOMMENDED_CITIES;
 
+  // Render the component
   return (
     <div className="p-4 space-y-4">
       <h1 className="page-title text-2xl font-bold text-black dark:text-white">Locations</h1>
