@@ -18,6 +18,7 @@ const SiteClock = () => {
 
   return (
     <div className="mt-auto border-t border-gray-200 dark:border-gray-700 px-2 py-4">
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Site Briefing</p>
       <p className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">{time}</p>
       <p className="text-xs font-semibold text-slate-400 mt-0.5">{date}</p>
     </div>
@@ -27,10 +28,11 @@ const SiteClock = () => {
 export const BottomNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'weather',   label: 'Weather',   icon: '☀️' },
+    { id: 'forecast',  label: 'Forecast',  icon: '📈' },
+    { id: 'detailed',  label: 'Report',    icon: '🔬' },
     { id: 'locations', label: 'Locations', icon: '🗺️' },
     { id: 'alerts',    label: 'Alerts',    icon: '🔔' },
     { id: 'safety',    label: 'Safety',    icon: '🦺' },
-    { id: 'forecast',  label: 'Forecast',  icon: '📈' },
     { id: 'settings',  label: 'Settings',  icon: '⚙️' },
   ];
 
@@ -72,7 +74,7 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
           "
           style={{ transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}
         >
-          {tabs.map((tab) => {
+          {tabs.filter(tab => tab.id !== 'detailed').map((tab) => {
             const isActive = tab.id === activeTab;
             return (
               <button
