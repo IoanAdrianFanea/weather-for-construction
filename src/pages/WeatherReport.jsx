@@ -28,7 +28,10 @@ const dewPoint = (tempC, humidity) => {
 };
 
 const wetBulb = (tempC, humidity) => {
+<<<<<<< Updated upstream
   // Stull approximation
+=======
+>>>>>>> Stashed changes
   const wb = tempC * Math.atan(0.151977 * Math.pow(humidity + 8.313659, 0.5))
     + Math.atan(tempC + humidity)
     - Math.atan(humidity - 1.676331)
@@ -121,6 +124,7 @@ const SectionHeader = ({ title, icon }) => (
   </div>
 );
 
+<<<<<<< Updated upstream
 const Card = ({ label, value, unit, sub, highlight, children }) => (
   <div className={`bg-white dark:bg-gray-800 rounded-2xl p-4 border shadow-sm flex flex-col gap-1 ${highlight ? 'border-orange-300 dark:border-orange-700' : 'border-slate-100 dark:border-gray-700'}`}>
     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</span>
@@ -140,17 +144,49 @@ const WideCard = ({ label, value, unit, sub, badge, badgeColor }) => (
       <div className="flex-1 min-w-0">
         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">{label}</span>
         <div className="text-xl font-black text-slate-800 dark:text-white">
+=======
+// Fixed-height card for desktop grids
+const Card = ({ label, value, unit, sub, highlight }) => (
+  <div className={`bg-white dark:bg-gray-800 rounded-2xl p-4 border shadow-sm flex flex-col justify-between h-28 ${highlight ? 'border-orange-300 dark:border-orange-700' : 'border-slate-100 dark:border-gray-700'}`}>
+    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">{label}</span>
+    <div>
+      {value !== undefined && (
+        <div className="text-xl font-black text-slate-800 dark:text-white leading-tight">
+>>>>>>> Stashed changes
           {value}{unit && <span className="text-xs font-semibold text-slate-400 ml-1">{unit}</span>}
         </div>
-        {sub && <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">{sub}</p>}
-      </div>
-      {badge && <span className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 ${badgeColor}`}>{badge}</span>}
+      )}
+      {sub && <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5 line-clamp-2">{sub}</p>}
     </div>
   </div>
 );
 
+<<<<<<< Updated upstream
 const Grid = ({ children }) => (
   <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">{children}</div>
+=======
+// Row-style item — used everywhere on mobile, and for Heat Stress/Wind/Atmosphere on desktop too
+const RowItem = ({ label, value, unit, sub, badge, badgeColor, highlight }) => (
+  <div className={`bg-white dark:bg-gray-800 rounded-2xl px-5 py-4 border shadow-sm flex items-center justify-between gap-4 ${highlight ? 'border-orange-300 dark:border-orange-700' : 'border-slate-100 dark:border-gray-700'}`}>
+    <div className="flex-1 min-w-0">
+      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">{label}</span>
+      <div className="flex items-baseline gap-1.5 flex-wrap">
+        {value !== undefined && (
+          <span className="text-lg font-black text-slate-800 dark:text-white leading-tight">
+            {value}{unit && <span className="text-xs font-semibold text-slate-400 ml-1">{unit}</span>}
+          </span>
+        )}
+        {sub && <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">{sub}</p>}
+      </div>
+    </div>
+    {badge && <span className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 whitespace-nowrap ${badgeColor}`}>{badge}</span>}
+  </div>
+);
+
+// Always rows (Heat Stress, Wind, Atmosphere, UV, AQI header)
+const RowStack = ({ children }) => (
+  <div className="flex flex-col gap-2 mb-6">{children}</div>
+>>>>>>> Stashed changes
 );
 
 // ─── Main page ───────────────────────────────────────────────────────────────
@@ -185,7 +221,6 @@ const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'k
   if (error)    return <div className="p-4 text-red-500">{error}</div>;
   if (!current) return <div className="p-4 text-slate-600 dark:text-slate-400">No data available.</div>;
 
-  // Raw values
   const tempC       = current.main?.temp ?? 0;
   const feelsC      = current.main?.feels_like ?? tempC;
   const minC        = current.main?.temp_min ?? tempC;
@@ -207,14 +242,12 @@ const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'k
   const sunrise     = current.sys?.sunrise;
   const sunset      = current.sys?.sunset;
   const weatherId   = current.weather?.[0]?.id;
-  const weatherMain = current.weather?.[0]?.main ?? '';
   const weatherDesc = current.weather?.[0]?.description ?? '';
   const dt          = current.dt;
 
   const tempLabel  = tempUnit === 'F' ? '°F' : '°C';
   const speedLabel = speedUnit === 'mph' ? 'mph' : 'km/h';
 
-  // Derived
   const dp   = dewPoint(tempC, humidity);
   const wb   = wetBulb(tempC, humidity);
   const wbR  = wetBulbRisk(wb);
@@ -227,244 +260,181 @@ const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'k
   const uv   = uvIndex !== null ? uvDesc(uvIndex) : null;
   const aqiD = aqi !== null ? aqiDesc(aqi) : null;
 
-  const sunriseStr    = sunrise ? new Date(sunrise * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '—';
-  const sunsetStr     = sunset  ? new Date(sunset  * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '—';
-  const daylightMins  = sunrise && sunset ? Math.round((sunset - sunrise) / 60) : null;
-  const daylightStr   = daylightMins ? `${Math.floor(daylightMins / 60)}h ${daylightMins % 60}m` : '—';
-  const nowSec        = Math.floor(Date.now() / 1000);
-  const minsToSunset  = sunset ? Math.max(0, Math.round((sunset - nowSec) / 60)) : null;
-  const workingLight  = minsToSunset !== null
+  const sunriseStr   = sunrise ? new Date(sunrise * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '—';
+  const sunsetStr    = sunset  ? new Date(sunset  * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '—';
+  const daylightMins = sunrise && sunset ? Math.round((sunset - sunrise) / 60) : null;
+  const daylightStr  = daylightMins ? `${Math.floor(daylightMins / 60)}h ${daylightMins % 60}m` : '—';
+  const nowSec       = Math.floor(Date.now() / 1000);
+  const minsToSunset = sunset ? Math.max(0, Math.round((sunset - nowSec) / 60)) : null;
+  const workingLight = minsToSunset !== null
     ? (minsToSunset === 0 ? 'Daylight ended' : `${Math.floor(minsToSunset / 60)}h ${minsToSunset % 60}m remaining`)
     : '—';
-  const lastUpdated   = dt ? new Date(dt * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
+  const lastUpdated  = dt ? new Date(dt * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
 
   return (
     <div className="p-4 space-y-4">
 
       {/* Page header */}
-  
-        <h1 className="page-title text-2xl font-bold text-black dark:text-white">Report</h1>
-            <div>  
-                <p className="page-title-legend text-sm text-gray-500 -mt-2">Full technical readout for site planning</p>
-                <div className="flex items-center gap-3 mt-1 flex-wrap">
-                <span className="text-xs text-slate-400 bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-lg">
-                    Updated {lastUpdated}
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-lg capitalize">
-                    {weatherDesc} · ID {weatherId}
-                </span>
-            </div>
+      <h1 className="page-title text-2xl font-bold text-black dark:text-white">Report</h1>
+      <div>
+        <p className="page-title-legend text-sm text-gray-500 -mt-2">Full technical readout for site planning</p>
+        <div className="flex items-center gap-3 mt-1 flex-wrap">
+          <span className="text-xs text-slate-400 bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-lg">Updated {lastUpdated}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-lg capitalize">{weatherDesc} · ID {weatherId}</span>
         </div>
-
+      </div>
 
       {/* ── 1. Temperature ── */}
-    <SectionHeader icon="🌡️" title="Temperature" />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 items-stretch">
-        <div className="h-full">
-            <Card
-            className="h-full min-h-[116px] flex flex-col"
-            label="Actual"
-            value={convertTemp(tempC, tempUnit)}
-            unit={tempLabel}
-            />
-        </div>
+      {/* Mobile: rows | Desktop: 4-col grid */}
+      <SectionHeader icon="🌡️" title="Temperature" />
+      <div className="flex flex-col gap-2 mb-6 md:hidden">
+        <RowItem label="Actual"     value={convertTemp(tempC,  tempUnit)} unit={tempLabel} />
+        <RowItem label="Feels Like" value={convertTemp(feelsC, tempUnit)} unit={tempLabel} sub="Wind & humidity adjusted" />
+        <RowItem label="Min Today"  value={convertTemp(minC,   tempUnit)} unit={tempLabel} />
+        <RowItem label="Max Today"  value={convertTemp(maxC,   tempUnit)} unit={tempLabel} />
+        {hi !== null && <RowItem label="Heat Index" value={convertTemp(hi, tempUnit)} unit={tempLabel} sub="Apparent temp in shade" highlight />}
+        {wc !== null && <RowItem label="Wind Chill" value={convertTemp(wc, tempUnit)} unit={tempLabel} sub="Apparent temp in wind"  highlight />}
+      </div>
+      <div className="hidden md:grid grid-cols-4 gap-3 mb-6">
+        <Card label="Actual"     value={convertTemp(tempC,  tempUnit)} unit={tempLabel} />
+        <Card label="Feels Like" value={convertTemp(feelsC, tempUnit)} unit={tempLabel} sub="Wind & humidity adjusted" />
+        <Card label="Min Today"  value={convertTemp(minC,   tempUnit)} unit={tempLabel} />
+        <Card label="Max Today"  value={convertTemp(maxC,   tempUnit)} unit={tempLabel} />
+        {hi !== null && <Card label="Heat Index" value={convertTemp(hi, tempUnit)} unit={tempLabel} sub="Apparent temp in shade" highlight />}
+        {wc !== null && <Card label="Wind Chill" value={convertTemp(wc, tempUnit)} unit={tempLabel} sub="Apparent temp in wind"  highlight />}
+      </div>
 
-        <div className="h-full">
-            <Card
-            className="h-full min-h-[116px] flex flex-col"
-            label="Feels Like"
-            value={convertTemp(feelsC, tempUnit)}
-            unit={tempLabel}
-            sub="Wind & humidity adjusted"
-            />
-        </div>
-
-        <div className="h-full">
-            <Card
-            className="h-full min-h-[116px] flex flex-col"
-            label="Min Today"
-            value={convertTemp(minC, tempUnit)}
-            unit={tempLabel}
-            />
-        </div>
-
-        <div className="h-full">
-            <Card
-            className="h-full min-h-[116px] flex flex-col"
-            label="Max Today"
-            value={convertTemp(maxC, tempUnit)}
-            unit={tempLabel}
-            />
-        </div>
-
-        {hi !== null && (
-            <div className="h-full">
-            <Card
-                className="h-full min-h-[116px] flex flex-col"
-                label="Heat Index"
-                value={convertTemp(hi, tempUnit)}
-                unit={tempLabel}
-                sub="Apparent temp in shade"
-                highlight
-            />
-            </div>
-        )}
-
-        {wc !== null && (
-            <div className="h-full">
-            <Card
-                className="h-full min-h-[116px] flex flex-col"
-                label="Wind Chill"
-                value={convertTemp(wc, tempUnit)}
-                unit={tempLabel}
-                sub="Apparent temp in wind"
-                highlight
-            />
-            </div>
-        )}
-        </div>
-
-      {/* ── 2. Heat stress ── */}
+      {/* ── 2. Heat Stress — always rows ── */}
       <SectionHeader icon="🔥" title="Heat Stress" />
-      <Grid>
-        <WideCard
-          label="Wet Bulb Temperature (OSHA standard)"
-          value={`${convertTemp(wb, tempUnit)}`} unit={tempLabel}
-          sub={`Site advisory: ${wbR.note}`}
-          badge={wbR.label} badgeColor={wbR.color + ' px-3 py-1.5 rounded-full text-xs font-bold'}
-        />
-        <Card label="Dew Point" value={dp} unit="°C" sub="Condensation forms on surfaces below this temp" />
-        <Card label="Absolute Humidity" value={absH} unit="g/m³" sub="Actual water in air" />
-        <Card label="Vapour Pressure Deficit" value={vpd} unit="kPa" sub={vpdDryingDesc(vpd)} highlight={vpd > 2 || vpd < 0.4} />
-      </Grid>
+      <RowStack>
+        <RowItem label="Wet Bulb Temperature (OSHA standard)" value={convertTemp(wb, tempUnit)} unit={tempLabel} sub={`Site advisory: ${wbR.note}`} badge={wbR.label} badgeColor={wbR.color} />
+        <RowItem label="Dew Point" value={dp} unit="°C" sub="Condensation forms on surfaces below this temp" />
+        <RowItem label="Absolute Humidity" value={absH} unit="g/m³" sub="Actual water in air" />
+        <RowItem label="Vapour Pressure Deficit" value={vpd} unit="kPa" sub={vpdDryingDesc(vpd)} highlight={vpd > 2 || vpd < 0.4} />
+      </RowStack>
 
-      {/* ── 3. Wind ── */}
+      {/* ── 3. Wind — always rows ── */}
       <SectionHeader icon="💨" title="Wind" />
-      <Grid>
-        <Card label="Speed" value={convertSpeed(windKmh, speedUnit)} unit={speedLabel} />
-        <Card label="Gusts" value={convertSpeed(gustKmh, speedUnit)} unit={speedLabel} highlight={gustKmh >= 35} sub={gustKmh >= 35 ? 'Secure all loose materials' : undefined} />
-        <Card label="Direction" value={windDirection(windDeg)} unit={`${windDeg}°`} sub={`Coming from the ${windDirection(windDeg)}`} />
-        <WideCard
+      <RowStack>
+        <RowItem label="Speed"     value={convertSpeed(windKmh, speedUnit)} unit={speedLabel} />
+        <RowItem label="Gusts"     value={convertSpeed(gustKmh, speedUnit)} unit={speedLabel} highlight={gustKmh >= 35} sub={gustKmh >= 35 ? 'Secure all loose materials' : undefined} />
+        <RowItem label="Direction" value={windDirection(windDeg)} unit={`${windDeg}°`} sub={`Coming from the ${windDirection(windDeg)}`} />
+        <RowItem
           label="Beaufort Scale"
           value={`Force ${bf.level}`}
-          sub={`Construction note: ${bf.level >= 6 ? 'Outdoor work at risk — secure all materials immediately' : bf.level >= 4 ? 'Monitor conditions, secure loose items' : 'Safe for normal operations'}`}
+          sub={bf.level >= 6 ? 'Outdoor work at risk — secure all materials immediately' : bf.level >= 4 ? 'Monitor conditions, secure loose items' : 'Safe for normal operations'}
           badge={bf.desc}
           badgeColor={bf.level >= 6 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' : bf.level >= 4 ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'}
         />
-      </Grid>
+      </RowStack>
 
-      {/* ── 4. Atmosphere ── */}
+      {/* ── 4. Atmosphere — always rows ── */}
       <SectionHeader icon="🌫️" title="Atmosphere" />
-      <Grid>
-        <Card label="Humidity" value={humidity} unit="%" sub={humidity > 80 ? 'High — increased slip & corrosion risk' : 'Normal'} highlight={humidity > 80} />
-        <Card label="Visibility" value={(visibility / 1000).toFixed(1)} unit="km" sub={visibilityDesc(visibility)} highlight={visibility < 2000} />
-        <Card label="Cloud Cover" value={cloudPct} unit="%" />
-        <WideCard
+      <RowStack>
+        <RowItem label="Humidity"   value={humidity} unit="%" sub={humidity > 80 ? 'High — increased slip & corrosion risk' : 'Normal'} highlight={humidity > 80} />
+        <RowItem label="Visibility" value={(visibility / 1000).toFixed(1)} unit="km" sub={visibilityDesc(visibility)} highlight={visibility < 2000} />
+        <RowItem label="Cloud Cover" value={cloudPct} unit="%" />
+        <RowItem
           label="Atmospheric Pressure"
           value={pressure} unit="hPa"
           sub={`${pres.desc}${seaLevel !== pressure ? ` · Sea level: ${seaLevel} hPa` : ''}${groundLevel ? ` · Ground level: ${groundLevel} hPa` : ''}`}
           badge={`${pres.label} pressure`}
-          badgeColor={`${pres.color} bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-full text-xs font-bold`}
+          badgeColor={`${pres.color} bg-slate-100 dark:bg-slate-700`}
         />
-      </Grid>
+      </RowStack>
 
-      {/* ── 5. Precipitation ── */}
+      {/* ── 5. Precipitation — rows on mobile, 3-col grid on desktop ── */}
       <SectionHeader icon="🌧️" title="Precipitation" />
-      <Grid>
+      <div className="flex flex-col gap-2 mb-6 md:hidden">
+        <RowItem label="Rain (last 1h)" value={rainMm1h.toFixed(1)} unit="mm" highlight={rainMm1h >= 10} sub={rainMm1h >= 10 ? 'Heavy — stop outdoor work' : rainMm1h >= 5 ? 'Moderate — take precautions' : rainMm1h > 0 ? 'Light' : 'None'} />
+        <RowItem label="Rain (last 3h)" value={rainMm3h.toFixed(1)} unit="mm" sub="3-hour accumulation" />
+        <RowItem label="Snowfall (1h)"  value={snowMm.toFixed(1)}   unit="mm" highlight={snowMm > 0} sub={snowMm > 0 ? 'Ice risk on all surfaces' : 'None'} />
+      </div>
+      <div className="hidden md:grid grid-cols-3 gap-3 mb-6">
         <Card label="Rain (last 1h)" value={rainMm1h.toFixed(1)} unit="mm" highlight={rainMm1h >= 10} sub={rainMm1h >= 10 ? 'Heavy — stop outdoor work' : rainMm1h >= 5 ? 'Moderate — take precautions' : rainMm1h > 0 ? 'Light' : 'None'} />
         <Card label="Rain (last 3h)" value={rainMm3h.toFixed(1)} unit="mm" sub="3-hour accumulation" />
-        <Card label="Snowfall (1h)" value={snowMm.toFixed(1)} unit="mm" highlight={snowMm > 0} sub={snowMm > 0 ? 'Ice risk on all surfaces' : 'None'} />
-      </Grid>
+        <Card label="Snowfall (1h)"  value={snowMm.toFixed(1)}   unit="mm" highlight={snowMm > 0} sub={snowMm > 0 ? 'Ice risk on all surfaces' : 'None'} />
+      </div>
 
-      {/* ── 6. UV ── */}
+      {/* ── 6. UV — always rows ── */}
       <SectionHeader icon="☀️" title="UV Index" />
-      <Grid>
-        {uvLoading ? (
-          <Card label="UV Index" value="—" sub="Loading..." />
-        ) : uv ? (
-          <WideCard
-            label="UV Index"
-            value={uvIndex.toFixed(1)}
-            sub={`Site advisory: ${uv.site}`}
-            badge={uv.label}
-            badgeColor={uv.color + ' px-3 py-1.5 rounded-full text-xs font-bold'}
-          />
-        ) : (
-          <Card label="UV Index" value="—" sub="Unavailable" />
-        )}
-      </Grid>
+      <RowStack>
+        {uvLoading
+          ? <RowItem label="UV Index" value="—" sub="Loading..." />
+          : uv
+            ? <RowItem label="UV Index" value={uvIndex.toFixed(1)} sub={`Site advisory: ${uv.site}`} badge={uv.label} badgeColor={uv.color} />
+            : <RowItem label="UV Index" value="—" sub="Unavailable" />
+        }
+      </RowStack>
 
       {/* ── 7. Air Quality ── */}
       <SectionHeader icon="💨" title="Air Quality" />
-      <Grid>
-        {aqiD ? (
-          <>
-            <WideCard
-              label="Air Quality Index (AQI)"
-              value={`Level ${aqi}`}
-              sub={`PPE advisory: ${aqiD.ppe}`}
-              badge={aqiD.label}
-              badgeColor={aqiD.color + ' px-3 py-1.5 rounded-full text-xs font-bold'}
-            />
-            {aqiComponents && (
-              <>
-                <Card label="PM2.5" value={aqiComponents.pm2_5?.toFixed(1)} unit="μg/m³" sub="Fine particles — lung penetration risk" highlight={aqiComponents.pm2_5 > 25} />
-                <Card label="PM10" value={aqiComponents.pm10?.toFixed(1)} unit="μg/m³" sub="Coarse particles — dust on site" highlight={aqiComponents.pm10 > 50} />
-                <Card label="NO₂" value={aqiComponents.no2?.toFixed(1)} unit="μg/m³" sub="Vehicle & machinery exhaust" />
-                <Card label="O₃ Ozone" value={aqiComponents.o3?.toFixed(1)} unit="μg/m³" sub="Elevated in heat & sunlight" />
-                <Card label="CO" value={aqiComponents.co?.toFixed(0)} unit="μg/m³" sub="Carbon monoxide — generator risk" highlight={aqiComponents.co > 4000} />
-                <Card label="SO₂" value={aqiComponents.so2?.toFixed(1)} unit="μg/m³" sub="Sulphur dioxide" />
-              </>
-            )}
-          </>
-        ) : (
-          <Card label="Air Quality" value="—" sub="Loading..." />
-        )}
-      </Grid>
+      {aqiD ? (
+        <>
+          <RowStack>
+            <RowItem label="Air Quality Index (AQI)" value={`Level ${aqi}`} sub={`PPE advisory: ${aqiD.ppe}`} badge={aqiD.label} badgeColor={aqiD.color} />
+          </RowStack>
+          {aqiComponents && (
+            <>
+              {/* Mobile: rows */}
+              <div className="flex flex-col gap-2 mb-6 md:hidden">
+                <RowItem label="PM2.5"    value={aqiComponents.pm2_5?.toFixed(1)} unit="μg/m³" sub="Fine particles — lung penetration risk"  highlight={aqiComponents.pm2_5 > 25} />
+                <RowItem label="PM10"     value={aqiComponents.pm10?.toFixed(1)}  unit="μg/m³" sub="Coarse particles — dust on site"          highlight={aqiComponents.pm10 > 50} />
+                <RowItem label="NO₂"      value={aqiComponents.no2?.toFixed(1)}   unit="μg/m³" sub="Vehicle & machinery exhaust" />
+                <RowItem label="O₃ Ozone" value={aqiComponents.o3?.toFixed(1)}    unit="μg/m³" sub="Elevated in heat & sunlight" />
+                <RowItem label="CO"       value={aqiComponents.co?.toFixed(0)}     unit="μg/m³" sub="Carbon monoxide — generator risk"         highlight={aqiComponents.co > 4000} />
+                <RowItem label="SO₂"      value={aqiComponents.so2?.toFixed(1)}    unit="μg/m³" sub="Sulphur dioxide" />
+              </div>
+              {/* Desktop: 3-col grid */}
+              <div className="hidden md:grid grid-cols-3 gap-3 mb-6">
+                <Card label="PM2.5"    value={aqiComponents.pm2_5?.toFixed(1)} unit="μg/m³" sub="Fine particles — lung penetration risk"  highlight={aqiComponents.pm2_5 > 25} />
+                <Card label="PM10"     value={aqiComponents.pm10?.toFixed(1)}  unit="μg/m³" sub="Coarse particles — dust on site"          highlight={aqiComponents.pm10 > 50} />
+                <Card label="NO₂"      value={aqiComponents.no2?.toFixed(1)}   unit="μg/m³" sub="Vehicle & machinery exhaust" />
+                <Card label="O₃ Ozone" value={aqiComponents.o3?.toFixed(1)}    unit="μg/m³" sub="Elevated in heat & sunlight" />
+                <Card label="CO"       value={aqiComponents.co?.toFixed(0)}     unit="μg/m³" sub="Carbon monoxide — generator risk"         highlight={aqiComponents.co > 4000} />
+                <Card label="SO₂"      value={aqiComponents.so2?.toFixed(1)}    unit="μg/m³" sub="Sulphur dioxide" />
+              </div>
+            </>
+          )}
+        </>
+      ) : (
+        <RowStack><RowItem label="Air Quality" value="—" sub="Loading..." /></RowStack>
+      )}
 
-      {/* ── 8. Daylight & Time ── */}
-        <SectionHeader icon="🌅" title="Daylight & Working Hours" />
-
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        {/* Row 1 → 2 2 2 */}
-        <div className="md:col-span-2">
-            <Card label="Sunrise" value={sunriseStr} />
+      {/* ── 8. Daylight — rows on mobile | desktop: row1={2+2+2} row2={3+3} ── */}
+      <SectionHeader icon="🌅" title="Daylight & Working Hours" />
+      {/* Mobile: rows */}
+      <div className="flex flex-col gap-2 mb-6 md:hidden">
+        <RowItem label="Sunrise"                value={sunriseStr} />
+        <RowItem label="Sunset"                 value={sunsetStr} />
+        <RowItem label="Total Daylight"         value={daylightStr} sub="Available natural light" />
+        <RowItem
+          label="Working Light Remaining"
+          value={workingLight}
+          highlight={minsToSunset !== null && minsToSunset < 60}
+          sub={minsToSunset !== null && minsToSunset < 60 ? 'Less than 1 hour of daylight left' : undefined}
+        />
+        <RowItem label="Last Data Update" value={lastUpdated} sub="OpenWeather station reading" />
+      </div>
+      {/* Desktop: 2-row layout */}
+      <div className="hidden md:block mb-6">
+        <div className="grid grid-cols-6 gap-3 mb-3">
+          <div className="col-span-2"><Card label="Sunrise"        value={sunriseStr} /></div>
+          <div className="col-span-2"><Card label="Sunset"         value={sunsetStr} /></div>
+          <div className="col-span-2"><Card label="Total Daylight" value={daylightStr} sub="Available natural light" /></div>
         </div>
-
-        <div className="md:col-span-2">
-            <Card label="Sunset" value={sunsetStr} />
-        </div>
-
-        <div className="md:col-span-2">
+        <div className="grid grid-cols-6 gap-3">
+          <div className="col-span-3">
             <Card
-            label="Total Daylight"
-            value={daylightStr}
-            sub="Available natural light"
+              label="Working Light Remaining"
+              value={workingLight}
+              highlight={minsToSunset !== null && minsToSunset < 60}
+              sub={minsToSunset !== null && minsToSunset < 60 ? 'Less than 1 hour of daylight left' : undefined}
             />
+          </div>
+          <div className="col-span-3"><Card label="Last Data Update" value={lastUpdated} sub="OpenWeather station reading" /></div>
         </div>
-
-        {/* Row 2 → 3 3 */}
-        <div className="md:col-span-3">
-            <Card
-            label="Working Light Remaining"
-            value={workingLight}
-            highlight={minsToSunset !== null && minsToSunset < 60}
-            sub={
-                minsToSunset !== null && minsToSunset < 60
-                ? "Less than 1 hour of daylight left"
-                : undefined
-            }
-            />
-        </div>
-
-        <div className="md:col-span-3">
-            <Card
-            label="Last Data Update"
-            value={lastUpdated}
-            sub="OpenWeather station reading"
-            />
-        </div>
-        </div>
+      </div>
 
     </div>
   );

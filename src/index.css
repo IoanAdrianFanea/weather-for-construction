@@ -95,7 +95,7 @@ button:focus-visible {
 
 /**/
 .navigation_background {
-  background: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)), url('/assets/construction_pattern.jpg');
+  background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9)), url('/assets/construction_pattern_white.jpg');
   background-repeat: repeat;
   background-size: auto;
 }
@@ -115,7 +115,17 @@ button:focus-visible {
   background-color: rgb(53, 49, 63); /* dark mode */
 }
 
+.main-header{
+  background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9)), url('/assets/construction_pattern_white.jpg');
+  background-repeat: repeat;
+  background-size: auto;
+}
 
+.dark .main-header{
+  background: linear-gradient(rgba(0, 0, 0, 0.836), rgba(0, 0, 0, 0.8)), url('/assets/construction_pattern.jpg');
+  background-repeat: repeat;
+  background-size: auto;
+}
 /**/
 @keyframes grow-left {
   from { width: 0; opacity: 0; }
@@ -153,6 +163,10 @@ button:focus-visible {
     padding: 0.7em 1.6em;
     font-size: 1.1em;
     border-radius: 10px;
+  }
+
+  .main-header, .dark .main-header{
+    background: unset;
   }
   
 }

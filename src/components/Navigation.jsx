@@ -28,15 +28,16 @@ const SiteClock = () => {
 export const BottomNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'weather',   label: 'Weather',   icon: '☀️' },
+    { id: 'locations', label: 'Locations', icon: '🗺️' },
     { id: 'forecast',  label: 'Forecast',  icon: '📈' },
     { id: 'detailed',  label: 'Report',    icon: '🔬' },
-    { id: 'locations', label: 'Locations', icon: '🗺️' },
     { id: 'alerts',    label: 'Alerts',    icon: '🔔' },
     { id: 'safety',    label: 'Safety',    icon: '🦺' },
     { id: 'settings',  label: 'Settings',  icon: '⚙️' },
   ];
 
   const activeIndex = tabs.findIndex(t => t.id === activeTab);
+  const navScrollRef = useRef(null);
   const touchStartX = useRef(null);
 
   const handleTouchStart = (e) => {
@@ -56,32 +57,50 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
     touchStartX.current = null;
   };
 
+  const handleTabClick = (tabId) => {
+    setActiveTab(tabId);
+    const bar = navScrollRef.current;
+    if (!bar) return;
+    const btn = bar.querySelector(`[data-id="${tabId}"]`);
+    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  };
+
   return (
     <>
-      {/* ── Mobile: floating island ── */}
+      {/* ── Mobile: scrollable floating island ── */}
       <div
         className="lg:hidden fixed bottom-5 left-0 right-0 flex justify-center z-50 px-4"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
         <div
+          ref={navScrollRef}
           className="
+            mobile-nav-pill
             flex items-center gap-1 px-3 py-2.5 rounded-full
             bg-white/80 dark:bg-gray-900/80
             backdrop-blur-xl
             shadow-[0_8px_32px_rgba(0,0,0,0.18)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
             border border-white/60 dark:border-gray-700/60
+            overflow-x-auto
           "
-          style={{ transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}
+          style={{
+            transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            maxWidth: '92vw',
+          }}
         >
-          {tabs.filter(tab => tab.id !== 'detailed').map((tab) => {
+          {tabs.map((tab) => {
             const isActive = tab.id === activeTab;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                data-id={tab.id}
+                onClick={() => handleTabClick(tab.id)}
                 style={{
                   transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+                  flexShrink: 0,
                 }}
                 className={`
                   relative flex flex-col items-center justify-center rounded-full
@@ -154,12 +173,13 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
         <SiteClock />
       </div>
 
-      {/* Label pop-in keyframe */}
+      {/* Label pop-in keyframe + hide mobile scrollbar on webkit */}
       <style>{`
         @keyframes labelPop {
           from { opacity: 0; transform: translateY(4px) scale(0.8); }
           to   { opacity: 1; transform: translateY(0)   scale(1);   }
         }
+        .mobile-nav-pill::-webkit-scrollbar { display: none; }
       `}</style>
     </>
   );
