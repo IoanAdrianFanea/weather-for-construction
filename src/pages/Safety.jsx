@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const faqs = [
+const faqs = [ // List of frequently asked questions and answers
   {
     question: "What do I do if it rains heavily on site?",
     answer: "Heavy rain makes surfaces slippery, reduces visibility, and can destabilize ground and structures. Stop high-risk work if conditions worsen, especially during storms or flooding. Workers should move slowly, wear slip-resistant boots, and avoid unsafe areas like muddy trenches or unstable scaffolding."
@@ -76,8 +76,8 @@ const links = [
   },
 ];
 
-const FAQItem = ({ question, answer }) => {
-  const [open, setOpen] = useState(false);
+const FAQItem = ({ question, answer }) => { // Each FAQ item with toggleable answer
+  const [open, setOpen] = useState(false); // State to track if the answer is visible
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
@@ -101,7 +101,7 @@ const FAQItem = ({ question, answer }) => {
   );
 };
 
-const Safety = () => {
+const Safety = () => { // Safety guide page layout
   return (
     <div className="p-4 space-y-4">
 

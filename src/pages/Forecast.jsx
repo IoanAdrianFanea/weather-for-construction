@@ -1,26 +1,26 @@
 import { useState, useRef } from 'react';
 import { convertTemp, convertSpeed } from '../utils/units';
 
-const HourlyStrip = ({ hourly, tempUnit, speedUnit }) => {
+const HourlyStrip = ({ hourly, tempUnit, speedUnit }) => { // Component for displaying hourly forecast horizontally
   const ref = useRef(null);
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e) => { // Handle mouse down 
     isDragging.current = true;
     startX.current = e.pageX - ref.current.offsetLeft;
     scrollLeft.current = ref.current.scrollLeft;
   };
 
-  const onMouseMove = (e) => {
+  const onMouseMove = (e) => { // Handle mouse move for dragging
     if (!isDragging.current) return;
     e.preventDefault();
     const x = e.pageX - ref.current.offsetLeft;
     ref.current.scrollLeft = scrollLeft.current - (x - startX.current) * 1.2;
   };
 
-  const onMouseUp = () => { isDragging.current = false; };
+  const onMouseUp = () => { isDragging.current = false; }; // Handle mouse up to stop dragging
 
   return (
     <div
@@ -32,7 +32,7 @@ const HourlyStrip = ({ hourly, tempUnit, speedUnit }) => {
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
     >
-      {hourly.map((h, i) => (
+      {hourly.map((h, i) => ( // Render each hourly forecast
         <div
           key={i}
           className="flex-shrink-0 w-14 lg:w-auto bg-slate-50 dark:bg-gray-700 rounded-xl p-1.5 flex flex-col items-center gap-0.5 border border-slate-100 dark:border-gray-600"
@@ -48,13 +48,13 @@ const HourlyStrip = ({ hourly, tempUnit, speedUnit }) => {
   );
 };
 
-const ForecastRow = ({ item, tempUnit, speedUnit }) => {
+const ForecastRow = ({ item, tempUnit, speedUnit }) => { // Component for each day's forecast row
   const [open, setOpen] = useState(false);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-700">
       <div
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen((o) => !o)} // Toggle open state
         className="px-4 py-3 flex items-center justify-between cursor-pointer"
       >
         <div className="flex items-center gap-3 ">
@@ -81,7 +81,7 @@ const ForecastRow = ({ item, tempUnit, speedUnit }) => {
         </div>
       </div>
 
-      {open && item.hourly?.length > 0 && (
+      {open && item.hourly?.length > 0 && ( // Show hourly strip 
         <div className="px-3 pb-3 border-t border-slate-100 dark:border-gray-700">
           <p className="text-xs text-slate-400 mt-2 mb-1">Every 3 hours — drag to scroll</p>
           <HourlyStrip hourly={item.hourly} tempUnit={tempUnit} speedUnit={speedUnit} />
@@ -91,15 +91,15 @@ const ForecastRow = ({ item, tempUnit, speedUnit }) => {
   );
 };
 
-const Forecast = ({ forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
+const Forecast = ({ forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => { // Displays the 5-day forecast 
   if (loading) return <div className="p-4 text-slate-600 dark:text-slate-400">Loading forecast...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
   if (!forecast?.length) return <div className="p-4 text-slate-600 dark:text-slate-400">No forecast data available.</div>;
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="page-title text-2xl font-bold text-black dark:text-white">5-Day Forecast</h1>
-      <p className="text-sm text-gray-500 dark:text-gray-400 -mt-1">Tap a day to see 3-hourly predictions</p>
+      <h1 className="page-title text-2xl font-bold text-black dark:text-white">5- Day Forecast</h1>
+      <p className="page-title-legend text-sm text-gray-500 -mt-2">View hourly predictions</p>
       {forecast.map((item) => (
         <ForecastRow key={`${item.day}-${item.dateLabel}`} item={item} tempUnit={tempUnit} speedUnit={speedUnit} />
       ))}

@@ -5,6 +5,7 @@ const DEFAULTS = {
   theme: 'light',
   tempUnit: 'C',
   speedUnit: 'kmh',
+  alertsEnabled: false,
 };
 
 const load = (key) => {
@@ -25,26 +26,13 @@ export const usePreferences = () => {
   const [theme, setThemeState] = useState(() => load('theme'));
   const [tempUnit, setTempUnitState] = useState(() => load('tempUnit'));
   const [speedUnit, setSpeedUnitState] = useState(() => load('speedUnit'));
+  const [alertsEnabled, setAlertsEnabledState] = useState(() => load('alertsEnabled'));
 
-  const setDefaultCity = (city) => {
-    setDefaultCityState(city);
-    save('defaultCity', city);
-  };
+  const setDefaultCity = (city) => { setDefaultCityState(city); save('defaultCity', city); };
+  const setTheme = (t) => { setThemeState(t); save('theme', t); };
+  const setTempUnit = (unit) => { setTempUnitState(unit); save('tempUnit', unit); };
+  const setSpeedUnit = (unit) => { setSpeedUnitState(unit); save('speedUnit', unit); };
+  const setAlertsEnabled = (val) => { setAlertsEnabledState(val); save('alertsEnabled', val); };
 
-  const setTheme = (t) => {
-    setThemeState(t);
-    save('theme', t);
-  };
-
-  const setTempUnit = (unit) => {
-    setTempUnitState(unit);
-    save('tempUnit', unit);
-  };
-
-  const setSpeedUnit = (unit) => {
-    setSpeedUnitState(unit);
-    save('speedUnit', unit);
-  };
-
-  return { defaultCity, setDefaultCity, theme, setTheme, tempUnit, setTempUnit, speedUnit, setSpeedUnit };
+  return { defaultCity, setDefaultCity, theme, setTheme, tempUnit, setTempUnit, speedUnit, setSpeedUnit, alertsEnabled, setAlertsEnabled };
 };

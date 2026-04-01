@@ -1,17 +1,38 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import logoIcon from '../assets/icons/logo_transparent_fixed.png';
 
 /**
  * Navigation.jsx
  * Floating island-style bottom nav (mobile) + left sidebar (desktop)
  */
+const SiteClock = () => {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const date = now.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+
+  return (
+    <div className="mt-auto border-t border-gray-200 dark:border-gray-700 px-2 py-4">
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Site Briefing</p>
+      <p className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">{time}</p>
+      <p className="text-xs font-semibold text-slate-400 mt-0.5">{date}</p>
+    </div>
+  );
+};
+
 export const BottomNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'weather',   label: 'Weather',   icon: '☀️' },
+    { id: 'forecast',  label: 'Forecast',  icon: '📈' },
+    { id: 'detailed',  label: 'Report',    icon: '🔬' },
     { id: 'locations', label: 'Locations', icon: '🗺️' },
     { id: 'alerts',    label: 'Alerts',    icon: '🔔' },
     { id: 'safety',    label: 'Safety',    icon: '🦺' },
-    { id: 'forecast',  label: 'Forecast',  icon: '📈' },
     { id: 'settings',  label: 'Settings',  icon: '⚙️' },
   ];
 
@@ -53,7 +74,7 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
           "
           style={{ transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}
         >
-          {tabs.map((tab) => {
+          {tabs.filter(tab => tab.id !== 'detailed').map((tab) => {
             const isActive = tab.id === activeTab;
             return (
               <button
@@ -100,7 +121,7 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
       {/* ── Desktop: left sidebar ── */}
       <div
         id="desktop-sidebar"
-        className="navigation-sidebar hidden lg:flex fixed top-0 left-0 h-full w-72 border-r border-gray-100 dark:border-gray-700 flex-col pt-8 px-4 z-50"
+        className="navigation-sidebar navigation_background hidden lg:flex fixed top-0 left-0 h-full w-72 border-r border-gray-100 dark:border-gray-700 flex-col pt-8 px-4 z-50"
       >
         <div className="mb-8 px-2 flex items-center gap-2">
           <img
@@ -128,6 +149,9 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
             <span className="text-sm font-semibold">{tab.label}</span>
           </button>
         ))}
+
+        {/* ── Clock / Date footer ── */}
+        <SiteClock />
       </div>
 
       {/* Label pop-in keyframe */}

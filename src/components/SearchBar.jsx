@@ -7,6 +7,7 @@ const pages = [
   { id: 'settings',  label: 'Settings' },
   { id: 'forecast',  label: 'Forecast' },
   { id: 'safety',    label: 'Safety Guide' },
+  { id: 'report',  label: 'Report' },
 ];
 
 export const SearchBar = ({ setActiveTab }) => {
