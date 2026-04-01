@@ -61,7 +61,6 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
       recs.push({text: "Weather conditions are favourable for work",
       icon: "✅"});
     }
-
     setRecommend(recs);  // update recs with new recommendations 
   }
 
