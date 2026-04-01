@@ -18,20 +18,10 @@ const getWeatherBackground = (weatherId, dt, sunrise, sunset) => {
   return '/assets/backgrounds/sky-sunny.gif';
 };
 
-<<<<<<< Updated upstream
-export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
-  const [recommend, setRecommend] = useState([]);
-
-  const activeCurrent = current;
-
-  const activeCurrent = current;
-
-=======
 export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh', setActiveTab }) => {
   const [recommend, setRecommend] = useState([]); 
   const activeCurrent = current;
 
->>>>>>> Stashed changes
   const activeWeather = {
     wind_speed: Math.round((activeCurrent?.wind?.speed || 0) * 3.6),
     rain_chance: Math.round((forecast?.[0]?.pop || 0) * 100),
@@ -82,7 +72,7 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
       ? `${activeCurrent.name}, ${activeCurrent.sys.country}`
       : activeCurrent.name || 'Unknown location';
 
-  const rawTemp = activeCurrent.main?.temp || 0;
+  const rawTemp = activeCurrent.main?.temp || 0; 
   const rawFeels = activeCurrent.main?.feels_like || rawTemp;
   const rawWindKmh = Math.round((activeCurrent.wind?.speed || 0) * 3.6);
   const rainMm = activeCurrent.rain?.['1h'] || activeCurrent.rain?.['3h'] || 0;
@@ -96,7 +86,7 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
   const condition = activeCurrent.weather?.[0]?.description || 'Current conditions';
 
   const weatherData = {
-    windSpeed: rawWindKmh,
+    windSpeed: rawWindKmh, 
     rainfall: rainMm,
     temperature: Math.round(rawTemp),
   };

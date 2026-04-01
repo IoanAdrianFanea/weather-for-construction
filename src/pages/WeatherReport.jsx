@@ -28,10 +28,6 @@ const dewPoint = (tempC, humidity) => {
 };
 
 const wetBulb = (tempC, humidity) => {
-<<<<<<< Updated upstream
-  // Stull approximation
-=======
->>>>>>> Stashed changes
   const wb = tempC * Math.atan(0.151977 * Math.pow(humidity + 8.313659, 0.5))
     + Math.atan(tempC + humidity)
     - Math.atan(humidity - 1.676331)
@@ -124,27 +120,6 @@ const SectionHeader = ({ title, icon }) => (
   </div>
 );
 
-<<<<<<< Updated upstream
-const Card = ({ label, value, unit, sub, highlight, children }) => (
-  <div className={`bg-white dark:bg-gray-800 rounded-2xl p-4 border shadow-sm flex flex-col gap-1 ${highlight ? 'border-orange-300 dark:border-orange-700' : 'border-slate-100 dark:border-gray-700'}`}>
-    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</span>
-    {value !== undefined && (
-      <div className="text-xl font-black text-slate-800 dark:text-white leading-tight">
-        {value}{unit && <span className="text-xs font-semibold text-slate-400 ml-1">{unit}</span>}
-      </div>
-    )}
-    {sub && <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">{sub}</p>}
-    {children}
-  </div>
-);
-
-const WideCard = ({ label, value, unit, sub, badge, badgeColor }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm col-span-2 lg:col-span-3">
-    <div className="flex items-start justify-between gap-4 flex-wrap">
-      <div className="flex-1 min-w-0">
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">{label}</span>
-        <div className="text-xl font-black text-slate-800 dark:text-white">
-=======
 // Fixed-height card for desktop grids
 const Card = ({ label, value, unit, sub, highlight }) => (
   <div className={`bg-white dark:bg-gray-800 rounded-2xl p-4 border shadow-sm flex flex-col justify-between h-28 ${highlight ? 'border-orange-300 dark:border-orange-700' : 'border-slate-100 dark:border-gray-700'}`}>
@@ -152,7 +127,6 @@ const Card = ({ label, value, unit, sub, highlight }) => (
     <div>
       {value !== undefined && (
         <div className="text-xl font-black text-slate-800 dark:text-white leading-tight">
->>>>>>> Stashed changes
           {value}{unit && <span className="text-xs font-semibold text-slate-400 ml-1">{unit}</span>}
         </div>
       )}
@@ -161,10 +135,6 @@ const Card = ({ label, value, unit, sub, highlight }) => (
   </div>
 );
 
-<<<<<<< Updated upstream
-const Grid = ({ children }) => (
-  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">{children}</div>
-=======
 // Row-style item — used everywhere on mobile, and for Heat Stress/Wind/Atmosphere on desktop too
 const RowItem = ({ label, value, unit, sub, badge, badgeColor, highlight }) => (
   <div className={`bg-white dark:bg-gray-800 rounded-2xl px-5 py-4 border shadow-sm flex items-center justify-between gap-4 ${highlight ? 'border-orange-300 dark:border-orange-700' : 'border-slate-100 dark:border-gray-700'}`}>
@@ -186,7 +156,6 @@ const RowItem = ({ label, value, unit, sub, badge, badgeColor, highlight }) => (
 // Always rows (Heat Stress, Wind, Atmosphere, UV, AQI header)
 const RowStack = ({ children }) => (
   <div className="flex flex-col gap-2 mb-6">{children}</div>
->>>>>>> Stashed changes
 );
 
 // ─── Main page ───────────────────────────────────────────────────────────────
@@ -276,8 +245,8 @@ const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'k
 
       {/* Page header */}
       <h1 className="page-title text-2xl font-bold text-black dark:text-white">Report</h1>
+      <p className="page-title-legend text-sm text-gray-500 -mt-2">Full technical readout for site planning</p>
       <div>
-        <p className="page-title-legend text-sm text-gray-500 -mt-2">Full technical readout for site planning</p>
         <div className="flex items-center gap-3 mt-1 flex-wrap">
           <span className="text-xs text-slate-400 bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-lg">Updated {lastUpdated}</span>
           <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-lg capitalize">{weatherDesc} · ID {weatherId}</span>
