@@ -11,6 +11,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { usePreferences } from './hooks/usePreference';
 import { useGeolocation } from './hooks/useGeolocation';
 import Safety from './pages/Safety';
+import WeatherReport from './pages/WeatherReport';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
@@ -135,6 +136,7 @@ function App() {
             error={weatherState.error}
             tempUnit={tempUnit}
             speedUnit={speedUnit}
+            setActiveTab={setActiveTab}
           />
         );
       case 'locations':
@@ -171,6 +173,16 @@ function App() {
         return (
           <Forecast
             forecast={weatherState.forecast}
+            loading={weatherState.loading}
+            error={weatherState.error}
+            tempUnit={tempUnit}
+            speedUnit={speedUnit}
+          />
+        );
+      case 'detailed':
+        return (
+          <WeatherReport
+            current={weatherState.current}
             loading={weatherState.loading}
             error={weatherState.error}
             tempUnit={tempUnit}
