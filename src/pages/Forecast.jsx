@@ -98,8 +98,8 @@ const Forecast = ({ forecast, loading, error, tempUnit = 'C', speedUnit = 'kmh' 
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="page-title text-2xl font-bold text-black dark:text-white">5-Day Forecast</h1>
-      <p className="text-sm text-gray-500 dark:text-gray-400 -mt-1">Tap a day to see 3-hourly predictions</p>
+      <h1 className="page-title text-2xl font-bold text-black dark:text-white">5- Day Forecast</h1>
+      <p className="page-title-legend text-sm text-gray-500 -mt-2">View hourly predictions</p>
       {forecast.map((item) => (
         <ForecastRow key={`${item.day}-${item.dateLabel}`} item={item} tempUnit={tempUnit} speedUnit={speedUnit} />
       ))}
