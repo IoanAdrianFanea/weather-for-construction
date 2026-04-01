@@ -38,7 +38,7 @@ const LocationCard = ({ name, temp, tempUnit, windSpeed, speedUnit, condition, a
   </div>
 );
 
-const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
+const Locations = ({ defaultCity, onSetDefaultCity, lastGeoCity, current, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
   const [cityWeather, setCityWeather] = useState(null);
@@ -86,8 +86,12 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
   const isDefault = activeCity?.toLowerCase() === defaultCity?.toLowerCase();
 
   const deviceCity = current?.name || '';
-  const recommendedCities = deviceCity
-    ? [deviceCity, ...RECOMMENDED_CITIES.filter((city) => city.toLowerCase() !== deviceCity.toLowerCase())]
+  const preferredGeoCity = lastGeoCity || deviceCity;
+  const recommendedCities = preferredGeoCity
+    ? [
+        preferredGeoCity,
+        ...RECOMMENDED_CITIES.filter((city) => city.toLowerCase() !== preferredGeoCity.toLowerCase()),
+      ]
     : RECOMMENDED_CITIES;
 
   return (
@@ -138,7 +142,13 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
           condition={condition}
           alert={alert || undefined}
           isDefault={isDefault}
-          onSetDefault={() => onSetDefaultCity(displayWeather?.name || selectedCity || defaultCity)}
+          onSetDefault={() => {
+            onSetDefaultCity(displayWeather?.name || selectedCity || defaultCity);
+            setSelectedCity(null);
+            setCityWeather(null);
+            setCityError('');
+            setCityLoading(false);
+          }}
         />
       )}
     </div>

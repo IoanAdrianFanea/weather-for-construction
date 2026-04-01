@@ -14,7 +14,18 @@ import Safety from './pages/Safety';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
-  const { defaultCity, setDefaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit } = usePreferences();
+  const {
+    defaultCity,
+    setDefaultCity,
+    userSelectedDefaultCity,
+    lastGeoCity,
+    setDefaultCityFromGeo,
+    setLastGeoCity,
+    tempUnit,
+    setTempUnit,
+    speedUnit,
+    setSpeedUnit,
+  } = usePreferences();
   const { coords, error: geoError } = useGeolocation();
   const [weatherState, setWeatherState] = useState({
     loading: true,
@@ -30,12 +41,22 @@ function App() {
       setWeatherState((previous) => ({ ...previous, loading: true, error: '' }));
 
       try {
-        const shouldUseCoords = coords?.lat && coords?.lon;
+        const shouldUseCoords = !userSelectedDefaultCity && coords?.lat && coords?.lon;
         const data = shouldUseCoords
           ? await getWeatherByCoords(coords.lat, coords.lon)
           : await getWeatherByCity(defaultCity);
 
         if (ignore) return;
+
+        if (shouldUseCoords && data?.current?.name) {
+          const geoCity = data.current.name;
+          if (geoCity !== lastGeoCity) {
+            setLastGeoCity(geoCity);
+          }
+          if (!userSelectedDefaultCity && geoCity !== defaultCity) {
+            setDefaultCityFromGeo(geoCity);
+          }
+        }
 
         setWeatherState({
           loading: false,
@@ -98,6 +119,7 @@ function App() {
           <Locations
             defaultCity={defaultCity}
             onSetDefaultCity={setDefaultCity}
+            lastGeoCity={lastGeoCity}
             current={weatherState.current}
             loading={weatherState.loading}
             error={weatherState.error}

@@ -5,6 +5,8 @@ const DEFAULTS = {
   theme: 'light',
   tempUnit: 'C',
   speedUnit: 'kmh',
+  userSelectedDefaultCity: false,
+  lastGeoCity: '',
 };
 
 const load = (key) => {
@@ -25,10 +27,26 @@ export const usePreferences = () => {
   const [theme, setThemeState] = useState(() => load('theme'));
   const [tempUnit, setTempUnitState] = useState(() => load('tempUnit'));
   const [speedUnit, setSpeedUnitState] = useState(() => load('speedUnit'));
+  const [userSelectedDefaultCity, setUserSelectedDefaultCity] = useState(() => load('userSelectedDefaultCity'));
+  const [lastGeoCity, setLastGeoCityState] = useState(() => load('lastGeoCity'));
 
   const setDefaultCity = (city) => {
     setDefaultCityState(city);
     save('defaultCity', city);
+    setUserSelectedDefaultCity(true);
+    save('userSelectedDefaultCity', true);
+  };
+
+  const setDefaultCityFromGeo = (city) => {
+    setDefaultCityState(city);
+    save('defaultCity', city);
+    setLastGeoCityState(city);
+    save('lastGeoCity', city);
+  };
+
+  const setLastGeoCity = (city) => {
+    setLastGeoCityState(city);
+    save('lastGeoCity', city);
   };
 
   const setTheme = (t) => {
@@ -46,5 +64,18 @@ export const usePreferences = () => {
     save('speedUnit', unit);
   };
 
-  return { defaultCity, setDefaultCity, theme, setTheme, tempUnit, setTempUnit, speedUnit, setSpeedUnit };
+  return {
+    defaultCity,
+    setDefaultCity,
+    userSelectedDefaultCity,
+    lastGeoCity,
+    setDefaultCityFromGeo,
+    setLastGeoCity,
+    theme,
+    setTheme,
+    tempUnit,
+    setTempUnit,
+    speedUnit,
+    setSpeedUnit,
+  };
 };
