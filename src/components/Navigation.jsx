@@ -17,8 +17,8 @@ const SiteClock = () => {
   const date = now.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
-    <div className="mt-auto border-t border-gray-200 dark:border-gray-700 px-2 py-4">
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Site Briefing</p>
+    <div className="border-t border-gray-200 dark:border-gray-700 px-2 py-4 shrink-0">
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">CURRENT TIME</p>
       <p className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">{time}</p>
       <p className="text-xs font-semibold text-slate-400 mt-0.5">{date}</p>
     </div>
@@ -29,7 +29,7 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'weather',   label: 'Weather',   icon: '☀️' },
     { id: 'locations', label: 'Locations', icon: '🗺️' },
-    { id: 'forecast',  label: 'Forecast',  icon: '📈' },
+    { id: 'forecast',  label: 'Forecast',  icon: '🗓️' },
     { id: 'detailed',  label: 'Report',    icon: '🔬' },
     { id: 'alerts',    label: 'Alerts',    icon: '🔔' },
     { id: 'safety',    label: 'Safety',    icon: '🦺' },
@@ -142,7 +142,8 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
         id="desktop-sidebar"
         className="navigation-sidebar navigation_background hidden lg:flex fixed top-0 left-0 h-full w-72 border-r border-gray-100 dark:border-gray-700 flex-col pt-8 px-4 z-50"
       >
-        <div className="mb-8 px-2 flex items-center gap-2">
+        {/* Logo — always visible at top */}
+        <div className="mb-8 px-2 flex items-center gap-2 shrink-0">
           <img
             src={logoIcon}
             alt="SiteWeather logo"
@@ -154,32 +155,39 @@ export const BottomNavigation = ({ activeTab, setActiveTab }) => {
           </div>
         </div>
 
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 w-full text-left transition-colors ${
-              activeTab === tab.id
-                ? 'bg-blue-50 text-blue-600 font-bold dark:bg-gray-700 dark:text-blue-400'
-                : 'text-slate-800 hover:bg-black/5 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200'
-            }`}
-          >
-            <span className="text-xl">{tab.icon}</span>
-            <span className="text-sm font-semibold">{tab.label}</span>
-          </button>
-        ))}
+        {/* Nav items — scrollable section */}
+        <div
+          className="flex-1 overflow-y-auto min-h-0"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 w-full text-left transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-blue-50 text-blue-600 font-bold dark:bg-gray-700 dark:text-blue-400'
+                  : 'text-slate-800 hover:bg-black/5 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200'
+              }`}
+            >
+              <span className="text-xl">{tab.icon}</span>
+              <span className="text-sm font-semibold">{tab.label}</span>
+            </button>
+          ))}
+        </div>
 
-        {/* ── Clock / Date footer ── */}
+        {/* Clock — always pinned at bottom, never scrolls */}
         <SiteClock />
       </div>
 
-      {/* Label pop-in keyframe + hide mobile scrollbar on webkit */}
+      {/* Keyframes + hide scrollbars */}
       <style>{`
         @keyframes labelPop {
           from { opacity: 0; transform: translateY(4px) scale(0.8); }
           to   { opacity: 1; transform: translateY(0)   scale(1);   }
         }
         .mobile-nav-pill::-webkit-scrollbar { display: none; }
+        #desktop-sidebar .overflow-y-auto::-webkit-scrollbar { display: none; }
       `}</style>
     </>
   );

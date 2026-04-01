@@ -95,13 +95,13 @@ button:focus-visible {
 
 /**/
 .navigation_background {
-  background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9)), url('/assets/construction_pattern_white.jpg');
+  background: linear-gradient(rgba(255, 255, 255, 1), rgba(255,255,255,1), rgba(255, 255, 255, 0.9)), url('/assets/construction_pattern_white.jpg');
   background-repeat: repeat;
   background-size: auto;
 }
 
 .dark .navigation_background {
-  background: linear-gradient(rgba(0, 0, 0, 0.836), rgba(0, 0, 0, 0.8)), url('/assets/construction_pattern.jpg');
+  background: linear-gradient(rgb(10, 14, 31),rgb(20, 22, 34) ,rgba(13, 15, 25, 0.836)), url('/assets/construction_pattern.jpg');
   background-repeat: repeat;
   background-size: auto;
 }
