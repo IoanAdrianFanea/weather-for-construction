@@ -1,49 +1,5 @@
 import { useEffect } from 'react';
-
-const alertRules = {
-  windSpeed: [
-    {
-      min: 25,
-      severity: 'high',
-      title: 'Strong Wind Warning',
-      details: (v) => `Gusts exceeding ${v} km/h expected. Secure loose materials and avoid outdoor tasks.`,
-    },
-    {
-      min: 15,
-      severity: 'medium',
-      title: 'Wind Advisory',
-      details: (v) => `Winds up to ${v} km/h expected. Monitor conditions on site.`,
-    },
-  ],
-  rainfall: [
-    {
-      min: 10,
-      severity: 'high',
-      title: 'Heavy Rain Warning',
-      details: (v) => `Heavy rainfall of ${v}mm. Slippery conditions — avoid outdoor tasks.`,
-    },
-    {
-      min: 5,
-      severity: 'medium',
-      title: 'Rain Advisory',
-      details: (v) => `Rainfall of ${v}mm expected. Take precautions on site.`,
-    },
-  ],
-  temperature: [
-    {
-      min: 30,
-      severity: 'high',
-      title: 'Extreme Heat Warning',
-      details: (v) => `Temperature at ${v}°C. Stay hydrated and limit outdoor exposure.`,
-    },
-    {
-      min: 25,
-      severity: 'medium',
-      title: 'High Temperature Advisory',
-      details: (v) => `Temperature reaching ${v}°C. Ensure workers take regular breaks.`,
-    },
-  ],
-};
+import { alertRules } from '../pages/Alerts';
 
 const generateAlerts = (current) => {
   if (!current) return [];
@@ -51,8 +7,17 @@ const generateAlerts = (current) => {
   const windKmh = Math.round((current.wind?.speed || 0) * 3.6);
   const rainfall = current.rain?.['1h'] || current.rain?.['3h'] || 0;
   const temperature = Math.round(current.main?.temp || 0);
+  const uvIndex = current.uvi || 0;
+  const heatIndex = (tempC, humidity) => {
+    if (tempC < 27) return null;
+    const T = tempC * 9/5 + 32, R = humidity;
+    const HI = -42.379 + 2.04901523*T + 10.14333127*R - 0.22475541*T*R
+      - 0.00683783*T*T - 0.05481717*R*R + 0.00122874*T*T*R
+      + 0.00085282*T*R*R - 0.00000199*T*T*R*R;
+    return Math.round((HI - 32) * 5/9);
+  };
 
-  const values = { windSpeed: windKmh, rainfall, temperature };
+  const values = { windSpeed: windKmh, rainfall, temperature, uvIndex, heatIndex };
   const alerts = [];
 
   Object.entries(alertRules).forEach(([key, rules]) => {
