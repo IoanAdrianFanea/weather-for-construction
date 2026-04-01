@@ -1,9 +1,9 @@
 import { useTheme } from '../context/ThemeContext';
 
-const UnitToggle = ({ value, optionA, optionB, labelA, labelB, onChange }) => (
+const UnitToggle = ({ value, optionA, optionB, labelA, labelB, onChange }) => ( // A toggle component for switching between two options
   <div className="flex rounded-lg overflow-hidden border border-slate-300 dark:border-gray-600">
     <button
-      onClick={() => onChange(optionA)}
+      onClick={() => onChange(optionA)} // Change to option A when clicked
       className={`px-3 py-1 text-sm font-semibold transition-colors ${
         value === optionA
           ? 'bg-blue-500 text-white'
@@ -13,7 +13,7 @@ const UnitToggle = ({ value, optionA, optionB, labelA, labelB, onChange }) => (
       {labelA}
     </button>
     <button
-      onClick={() => onChange(optionB)}
+      onClick={() => onChange(optionB)} // Change to option B when clicked
       className={`px-3 py-1 text-sm font-semibold transition-colors ${
         value === optionB
           ? 'bg-blue-500 text-white'
@@ -25,7 +25,7 @@ const UnitToggle = ({ value, optionA, optionB, labelA, labelB, onChange }) => (
   </div>
 );
 
-const Toggle = ({ enabled, onChange }) => (
+const Toggle = ({ enabled, onChange }) => ( // An on/off toggle 
   <div
     onClick={onChange}
     className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors duration-200 ${enabled ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'}`}
@@ -35,11 +35,11 @@ const Toggle = ({ enabled, onChange }) => (
 );
 
 const Settings = ({ defaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit, alertsEnabled, setAlertsEnabled }) => {
-  const { isDark, toggle } = useTheme();
+  const { isDark, toggle } = useTheme(); // Get current theme and toggle function from context
 
-  const notifPermission = typeof Notification !== 'undefined' ? Notification.permission : 'unsupported';
+  const notifPermission = typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'; 
 
-  const handleAlertsToggle = async () => {
+  const handleAlertsToggle = async () => { // Handle toggling of weather alerts
     if (alertsEnabled) {
       // Turn off
       setAlertsEnabled(false);
@@ -64,12 +64,13 @@ const Settings = ({ defaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit,
     });
   };
 
-  const permissionLabel = () => {
+  const permissionLabel = () => { // Display the status of notification permissions and alerts
     if (notifPermission === 'denied') return <span className="text-xs text-red-500 font-semibold">Blocked by browser</span>;
     if (notifPermission === 'granted' && alertsEnabled) return <span className="text-xs text-green-500 font-semibold">Active</span>;
     return null;
   };
 
+  // Alert toggle states
   return (
     <div className="p-4 space-y-4">
       <h1 className="page-title text-2xl font-bold text-black dark:text-white">Settings</h1>

@@ -5,23 +5,23 @@ const getApiKey = () => import.meta.env.VITE_OPENWEATHER_API_KEY;
 
 // ─── Calculation helpers ─────────────────────────────────────────────────────
 
-const windDirection = (deg) => {
+const windDirection = (deg) => { // Convert wind direction in degrees to compass direction
   const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
   return dirs[Math.round(deg / 22.5) % 16];
 };
 
-const beaufortScale = (kmh) => {
+const beaufortScale = (kmh) => { // Convert wind speed in km/h to Beaufort scale
   const table = [
     [1,0,'Calm'], [6,1,'Light air'], [12,2,'Light breeze'], [20,3,'Gentle breeze'],
     [29,4,'Moderate breeze'], [39,5,'Fresh breeze'], [50,6,'Strong breeze'],
     [62,7,'Near gale'], [75,8,'Gale'], [89,9,'Severe gale'],
     [103,10,'Storm'], [118,11,'Violent storm'],
   ];
-  for (const [max, level, desc] of table) if (kmh < max) return { level, desc };
-  return { level: 12, desc: 'Hurricane' };
+  for (const [max, level, desc] of table) if (kmh < max) return { level, desc }; 
+  return { level: 12, desc: 'Hurricane' }; // Above 118 km/h is hurricane force
 };
 
-const dewPoint = (tempC, humidity) => {
+const dewPoint = (tempC, humidity) => { // Calculate dew point in °C using the Magnus formula
   const a = 17.27, b = 237.7;
   const alpha = (a * tempC) / (b + tempC) + Math.log(humidity / 100);
   return Math.round((b * alpha) / (a - alpha) * 10) / 10;
@@ -36,7 +36,7 @@ const wetBulb = (tempC, humidity) => {
   return Math.round(wb * 10) / 10;
 };
 
-const heatIndex = (tempC, humidity) => {
+const heatIndex = (tempC, humidity) => { // Calculate heat index in °C using the Rothfusz regression, return null if unable to calculate
   if (tempC < 27) return null;
   const T = tempC * 9/5 + 32, R = humidity;
   const HI = -42.379 + 2.04901523*T + 10.14333127*R - 0.22475541*T*R
@@ -45,23 +45,23 @@ const heatIndex = (tempC, humidity) => {
   return Math.round((HI - 32) * 5/9);
 };
 
-const windChill = (tempC, windKmh) => {
+const windChill = (tempC, windKmh) => { // Calculate wind chill in °C using the North American formula, return null if unable to calculate
   if (tempC > 10 || windKmh < 4.8) return null;
   const wc = 13.12 + 0.6215*tempC - 11.37*Math.pow(windKmh, 0.16) + 0.3965*tempC*Math.pow(windKmh, 0.16);
   return Math.round(wc * 10) / 10;
 };
 
-const absoluteHumidity = (tempC, humidity) => {
+const absoluteHumidity = (tempC, humidity) => { // Calculate absolute humidity in g/m³
   const es = 6.112 * Math.exp((17.67 * tempC) / (tempC + 243.5));
   return Math.round((2.1674 * humidity * es) / (tempC + 273.15) * 10) / 10;
 };
 
-const vapourPressureDeficit = (tempC, humidity) => {
+const vapourPressureDeficit = (tempC, humidity) => { // Calculate vapour pressure deficit in kPa
   const es = 0.6108 * Math.exp((17.27 * tempC) / (tempC + 237.3));
   return Math.round((1 - humidity / 100) * es * 100) / 100;
 };
 
-const wetBulbRisk = (wb) => {
+const wetBulbRisk = (wb) => { // Determine heat stress risk level based
   if (wb >= 32) return { label: 'Extreme danger', color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300', note: 'Stop all outdoor work immediately' };
   if (wb >= 28) return { label: 'Danger', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300', note: 'Limit strenuous outdoor tasks, mandatory rest breaks' };
   if (wb >= 25) return { label: 'High caution', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300', note: 'Increase rest breaks, ensure workers stay hydrated' };
@@ -69,13 +69,13 @@ const wetBulbRisk = (wb) => {
   return { label: 'Safe', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300', note: 'No heat stress risk' };
 };
 
-const pressureTrend = (hpa) => {
+const pressureTrend = (hpa) => { // Determine pressure trend category based on hPa value
   if (hpa > 1022) return { label: 'High', desc: 'Stable, clear conditions likely', color: 'text-green-600 dark:text-green-400' };
   if (hpa > 1009) return { label: 'Normal', desc: 'Settled conditions', color: 'text-blue-600 dark:text-blue-400' };
   return { label: 'Low', desc: 'Unsettled — rain or wind likely', color: 'text-red-600 dark:text-red-400' };
 };
 
-const visibilityDesc = (m) => {
+const visibilityDesc = (m) => { // Convert visibility in meters to descriptive categories
   if (m >= 10000) return 'Excellent';
   if (m >= 5000)  return 'Good';
   if (m >= 2000)  return 'Moderate';
@@ -83,7 +83,7 @@ const visibilityDesc = (m) => {
   return 'Very poor — fog conditions';
 };
 
-const uvDesc = (uvi) => {
+const uvDesc = (uvi) => { // Convert UV index to descriptive category and recommended precautions
   if (uvi <= 2)  return { label: 'Low',       color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',   site: 'No protection needed' };
   if (uvi <= 5)  return { label: 'Moderate',  color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300', site: 'Sun protection for prolonged outdoor work' };
   if (uvi <= 7)  return { label: 'High',      color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300', site: 'SPF 30+ required, limit midday exposure' };
@@ -91,7 +91,7 @@ const uvDesc = (uvi) => {
   return { label: 'Extreme', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300', site: 'Avoid outdoor work during peak hours' };
 };
 
-const aqiDesc = (aqi) => {
+const aqiDesc = (aqi) => { // Convert AQI value to descriptive category and recommended PPE
   const levels = [
     { label: 'Good',      color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',     ppe: 'No respiratory PPE required' },
     { label: 'Fair',      color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300', ppe: 'Standard dust mask recommended for sensitive workers' },
@@ -99,10 +99,10 @@ const aqiDesc = (aqi) => {
     { label: 'Poor',      color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',             ppe: 'FFP3 mask required, limit time outdoors' },
     { label: 'Very Poor', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300', ppe: 'Full respiratory protection, consider postponing work' },
   ];
-  return levels[(aqi ?? 1) - 1] || levels[0];
+  return levels[(aqi ?? 1) - 1] || levels[0]; 
 };
 
-const vpdDryingDesc = (vpd) => {
+const vpdDryingDesc = (vpd) => { // Convert vapour pressure deficit to drying condition categories 
   if (vpd < 0.4) return 'Very slow drying — high moisture, poor conditions for painting or concrete finishing';
   if (vpd < 0.8) return 'Slow drying — adequate for most tasks but allow extra cure time';
   if (vpd < 1.2) return 'Good drying conditions';
@@ -112,7 +112,7 @@ const vpdDryingDesc = (vpd) => {
 
 // ─── UI components ───────────────────────────────────────────────────────────
 
-const SectionHeader = ({ title, icon }) => (
+const SectionHeader = ({ title, icon }) => ( // A header component for different sections of the report
   <div className="flex items-center gap-2 mb-3 mt-2">
     <span className="text-base">{icon}</span>
     <h2 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">{title}</h2>
@@ -160,7 +160,7 @@ const RowStack = ({ children }) => (
 
 // ─── Main page ───────────────────────────────────────────────────────────────
 
-const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => {
+const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'kmh' }) => { // Main component
   const [uvIndex, setUvIndex]   = useState(null);
   const [uvLoading, setUvLoading] = useState(false);
   const [aqi, setAqi]           = useState(null);
@@ -168,16 +168,16 @@ const WeatherReport = ({ current, loading, error, tempUnit = 'C', speedUnit = 'k
 
   useEffect(() => {
     if (!current?.coord) return;
-    const { lat, lon } = current.coord;
+    const { lat, lon } = current.coord; // Get latitude and longitude from current weather data
     const key = getApiKey();
 
     setUvLoading(true);
-    fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${key}`)
+    fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${key}`) // Fetch UV index data from OpenWeather API
       .then(r => r.json())
       .then(d => { setUvIndex(d.value ?? null); setUvLoading(false); })
       .catch(() => setUvLoading(false));
 
-    fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${key}`)
+    fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${key}`) // Fetch air quality index data from OpenWeather API
       .then(r => r.json())
       .then(d => {
         const item = d.list?.[0];

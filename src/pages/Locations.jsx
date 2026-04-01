@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { getWeatherByCity } from '../services/openWeather';
 import { convertTemp, convertSpeed } from '../utils/units';
 
-const RECOMMENDED_CITIES = [
+const RECOMMENDED_CITIES = [ // List of recommended cities
   'London', 'Manchester', 'Birmingham', 'Edinburgh',
   'Glasgow', 'Bristol', 'Leeds', 'Liverpool',
   'Cardiff', 'Newcastle', 'Sheffield', 'Nottingham',
@@ -236,9 +236,9 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
     setCityLoading(true);
     setCityError('');
     setCityWeather(null);
-    try {
-      const data = await getWeatherByCity(cityName);
-      setCityWeather(data.current);
+    try { // Fetch weather data for the selected city
+      const data = await getWeatherByCity(cityName); // API call to fetch weather by city name
+      setCityWeather(data.current); // Update state
     } catch (e) {
       setCityError(e.message);
     } finally {
@@ -246,9 +246,9 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
     }
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = (e) => { // Handle search
     e.preventDefault();
-    const normalized = searchValue.trim();
+    const normalized = searchValue.trim(); 
     if (!normalized) return;
     handleSelectCity(normalized);
   };
@@ -271,6 +271,7 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
   const displayLoading = selectedCity ? cityLoading : loading;
   const displayError   = selectedCity ? cityError : error;
 
+  // Fetch weather for default city on initial load if not already fetched
   const locationName = displayWeather?.name
     ? `${displayWeather.name}, ${displayWeather.sys?.country}`
     : selectedCity || defaultCity;
