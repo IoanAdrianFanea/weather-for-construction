@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 
 const AlertCard = ({ title, time, severity, details }) => { // Define styles for different severity levels
   const severityStyles = {
@@ -74,13 +75,50 @@ export const alertRules = { // Define alert rules for different weather paramete
       details: (v) => `Cold temperature at ${v}°C. Wear appropriate protective clothing.`,
     },
   ],
+  heatIndex: [
+    {
+      min: 35,
+      severity: "high",
+      title: "Extreme Heat Warning",
+      details: (v) => `Heat index of ${v}°C. High heat risk, limit outdoor exposure.`,
+    },
+    {
+      min: 25,
+      severity: "medium",
+      title: "Moderate Heat Warning",
+      details: (v) => `Heat index reaching ${v}°C. Stay hydrated and take breaks.`,
+    },
+  ],
+  uvIndex: [
+    {
+      min: 6,
+      severity: "high",
+      title: "Heavy UV Warning",
+      details: (v) => `High UV index (${v}). Avoid outdoor tasks during peak sun hours. Use sun protection.`,
+    },
+    {
+      min: 3,
+      severity: "medium",
+      title: "Moderate UV Warning",
+      details: (v) => `Moderate UV index (${v}). Use sun protection when outdoors.`,
+    },
+  ],
+};
+
+const heatIndex = (tempC, humidity) => {
+  if (tempC < 27) return null;
+    const T = tempC * 9/5 + 32, R = humidity;
+    const HI = -42.379 + 2.04901523*T + 10.14333127*R - 0.22475541*T*R
+      - 0.00683783*T*T - 0.05481717*R*R + 0.00122874*T*T*R
+      + 0.00085282*T*R*R - 0.00000199*T*T*R*R;
+    return Math.round((HI - 32) * 5/9);
 };
 
 export const generateAlerts = (weather) => {
   const alerts = []; // Generate alerts based on the defined rules and current weather data
   Object.entries(alertRules).forEach(([key, rules]) => { // Loop through each weather parameter and its rules
     const value = weather[key];
-    if (value === undefined) return;
+    if (value === undefined || value === null) return;
       const matchedRule = rules.find(rule => {
         const minCheck = rule.min === undefined || value >= rule.min; // Comparisons
         const maxCheck = rule.max === undefined || value <= rule.max;
@@ -98,23 +136,43 @@ export const generateAlerts = (weather) => {
   return alerts;
 };
 
-export const Alerts = ({ current, loading, error }) => { // Displays active alerts
-  if (loading) {
-    return <div className="p-4 text-slate-600">Loading alerts...</div>;
-  }
+export const Alerts = ({ current, loading, error, uvIndex }) => {
+  const [uvFallback, setUvFallback] = useState(null);
 
-  if (error) {
-    return <div className="p-4 text-red-600">{error}</div>;
-  }
+  // fallback fetch (if uv not passed)
+  useEffect(() => {
+    if (!current?.coord) return;
 
-  if (!current) {
-    return <div className="p-4 text-slate-600">No weather data available for alerts.</div>;
-  }
+    if (typeof uvIndex === "number") return;
+
+    const { lat, lon } = current.coord;
+    const key = import.meta.env.VITE_OPENWEATHER_API_KEY;
+
+    fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${key}&units=metric`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("Fetched UV:", data.current?.uvi);
+        setUvFallback(data.current?.uvi ?? null);
+      })
+      .catch(() => {});
+  }, [current, uvIndex]);
+
+  if (loading) return <div className="p-4 text-slate-600">Loading alerts...</div>;
+  if (error) return <div className="p-4 text-red-600">{error}</div>;
+  if (!current) return <div className="p-4 text-slate-600">No data available.</div>;
+
+  console.log("UV PROP:", uvIndex);
+  console.log("UV FALLBACK:", uvFallback);
+
+  const tempC = current.main?.temp || 0;
+  const humidity = current.main?.humidity || 0;
 
   const weatherData = {
     windSpeed: Math.round((current.wind?.speed || 0) * 3.6), // Convert values
     rainfall: current.rain?.['1h'] || current.rain?.['3h'] || 0,
     temperature: Math.round(current.main?.temp || 0),
+    uvIndex: uvIndex ?? uvFallback,
+    heatIndex: heatIndex(tempC, humidity),
   };
 
   const alerts = generateAlerts(weatherData);
