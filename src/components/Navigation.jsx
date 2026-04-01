@@ -18,7 +18,7 @@ const SiteClock = () => {
 
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 px-2 py-4 shrink-0">
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Site Briefing</p>
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">CURRENT TIME</p>
       <p className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">{time}</p>
       <p className="text-xs font-semibold text-slate-400 mt-0.5">{date}</p>
     </div>
