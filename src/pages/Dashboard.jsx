@@ -144,6 +144,12 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
           <MetricTile label="Rain" value={rainMm.toFixed(1)} unit="mm" icon={<span className="text-2xl">🌧️</span>} />
           <MetricTile label="Wind" value={windSpeed} unit={speedLabel} icon={<span className="text-2xl">💨</span>} />
           <MetricTile label="Feels" value={feelsLike} unit={tempLabel} icon={<span className="text-2xl">🌡️</span>} />
+          <button
+            onClick={() => setActiveTab('detailed')}
+            className="col-span-3 block mt-2 text-center text-sm text-blue-600 hover:underline"
+          >
+            View Expanded Report →
+          </button>
         </div>
 
         {recommend.length > 0 && (() => {
