@@ -97,6 +97,18 @@ export const getWeatherByCity = async (city) => {
   };
 };
 
+export const getWeatherByCoords = async (lat, lon) => {
+  const [current, forecast] = await Promise.all([
+    fetchJson(buildUrl("weather", { lat, lon })),
+    fetchJson(buildUrl("forecast", { lat, lon })),
+  ]);
+
+  return {
+    current,
+    forecast,
+  };
+};
+
 
 export const getWeatherBackground = (weatherId, dt, sunrise, sunset) => {
   const isNight = dt < sunrise || dt > sunset;

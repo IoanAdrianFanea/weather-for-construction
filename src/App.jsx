@@ -6,14 +6,16 @@ import Settings from './pages/Settings';
 import Forecast from './pages/Forecast';
 import { Header } from './components/Header';
 import Layout from './components/Layout';
-import { buildFiveDayForecast, getWeatherByCity } from './services/openWeather';
+import { buildFiveDayForecast, getWeatherByCity, getWeatherByCoords } from './services/openWeather';
 import { ThemeProvider } from './context/ThemeContext';
 import { usePreferences } from './hooks/usePreference';
+import { useGeolocation } from './hooks/useGeolocation';
 import Safety from './pages/Safety';
 
 function App() {
   const [activeTab, setActiveTab] = useState('weather');
   const { defaultCity, setDefaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit } = usePreferences();
+  const { coords, error: geoError } = useGeolocation();
   const [weatherState, setWeatherState] = useState({
     loading: true,
     error: '',
@@ -28,7 +30,10 @@ function App() {
       setWeatherState((previous) => ({ ...previous, loading: true, error: '' }));
 
       try {
-        const data = await getWeatherByCity(defaultCity);
+        const shouldUseCoords = coords?.lat && coords?.lon;
+        const data = shouldUseCoords
+          ? await getWeatherByCoords(coords.lat, coords.lon)
+          : await getWeatherByCity(defaultCity);
 
         if (ignore) return;
 
@@ -55,7 +60,7 @@ function App() {
     return () => {
       ignore = true;
     };
-  }, [defaultCity]);
+  }, [defaultCity, coords?.lat, coords?.lon]);
 
   const headerLocation =
     weatherState.current?.name && weatherState.current?.sys?.country
@@ -143,7 +148,14 @@ function App() {
   return (
     <ThemeProvider>
       <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
-<Header location={headerLocation} projectStatus={projectStatus} setActiveTab={setActiveTab} current={weatherState.current} />        {renderPage()}
+        <Header
+          location={headerLocation}
+          projectStatus={projectStatus}
+          setActiveTab={setActiveTab}
+          current={weatherState.current}
+          geoError={geoError}
+        />
+        {renderPage()}
       </Layout>
     </ThemeProvider>
   );
