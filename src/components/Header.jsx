@@ -24,7 +24,9 @@ export const Header = ({ location, projectStatus, setActiveTab, current, geoErro
         </div>
 
         <div className="flex gap-3 items-center">
-          <SearchBar setActiveTab={setActiveTab} />
+          <div className="hidden lg:block">
+            <SearchBar setActiveTab={setActiveTab} />
+          </div>
 
           <button
             onClick={() => setNotifOpen(true)}

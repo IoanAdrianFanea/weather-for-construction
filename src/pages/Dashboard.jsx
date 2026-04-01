@@ -118,7 +118,7 @@ export const Dashboard = ({ current, forecast, loading, error, tempUnit = 'C', s
     <div>
       {/* Hero Section */}
       <div
-        className="pt-12 pb-16 relative overflow-hidden lg:pt-[10%] lg:pb-[10%] rounded-b-3xl mb-8"
+        className="pt-[30%] pb-[30%] relative overflow-hidden lg:pt-[10%] lg:pb-[10%] rounded-b-3xl mb-8"
         style={{
           backgroundImage: `url(${bgGif})`,
           backgroundSize: 'cover',
