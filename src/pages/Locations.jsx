@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getWeatherByCity } from '../services/openWeather';
+import { getWeatherByCity, getWeatherByCoords } from '../services/openWeather';
 import { convertTemp, convertSpeed } from '../utils/units';
 
 const RECOMMENDED_CITIES = [ // List of recommended cities
@@ -189,6 +189,10 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
   const [favourites, setFavourites]           = useState(loadFavourites);
   const [showFavourites, setShowFavourites]   = useState(false);
   const [geoStatus, setGeoStatus]             = useState(null); // null | 'requesting' | 'denied' | 'unavailable'
+  const [geoCoords, setGeoCoords]             = useState(coords || null);
+  const [geoWeather, setGeoWeather]           = useState(null);
+  const [geoLoading, setGeoLoading]           = useState(false);
+  const [geoErrorMessage, setGeoErrorMessage] = useState('');
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -199,22 +203,58 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleMyLocation = () => {
-    if (coords?.lat) {
-      // Already have coords — clear selected city so geo weather shows
-      setSelectedCity(null);
-      setCityWeather(null);
-      setCityError('');
-      setGeoStatus(null);
+  useEffect(() => {
+    if (coords?.lat && coords?.lon) {
+      setGeoCoords({ lat: coords.lat, lon: coords.lon });
+    }
+  }, [coords?.lat, coords?.lon]);
+
+  useEffect(() => {
+    if (!geoCoords?.lat || !geoCoords?.lon) {
+      setGeoWeather(null);
+      setGeoLoading(false);
+      setGeoErrorMessage('');
       return;
     }
+
+    let ignore = false;
+    setGeoLoading(true);
+    setGeoErrorMessage('');
+
+    getWeatherByCoords(geoCoords.lat, geoCoords.lon)
+      .then((data) => {
+        if (ignore) return;
+        setGeoWeather(data.current);
+      })
+      .catch((e) => {
+        if (ignore) return;
+        setGeoWeather(null);
+        setGeoErrorMessage(e?.message || 'Unable to load location weather.');
+      })
+      .finally(() => {
+        if (ignore) return;
+        setGeoLoading(false);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [geoCoords?.lat, geoCoords?.lon]);
+
+  const handleMyLocation = () => {
     if (!navigator.geolocation) {
       setGeoStatus('unavailable');
       return;
     }
     setGeoStatus('requesting');
     navigator.geolocation.getCurrentPosition(
-      () => { window.location.reload(); },
+      (position) => {
+        setGeoStatus(null);
+        setGeoCoords({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        });
+      },
       () => { setGeoStatus('denied'); }
     );
   };
@@ -291,6 +331,23 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
     ? [deviceCity, ...RECOMMENDED_CITIES.filter(c => c.toLowerCase() !== deviceCity.toLowerCase())]
     : RECOMMENDED_CITIES;
 
+  const geoName = geoWeather?.name && geoWeather?.sys?.country
+    ? `${geoWeather.name}, ${geoWeather.sys.country}`
+    : geoWeather?.name || 'My Location';
+  const geoCondition = geoWeather?.weather?.[0]?.description || 'Conditions unavailable';
+  const geoRawTemp = geoWeather?.main?.temp || 0;
+  const geoRawWindKmh = Math.round((geoWeather?.wind?.speed || 0) * 3.6);
+  const geoTemp = convertTemp(geoRawTemp, tempUnit);
+  const geoWindSpeed = convertSpeed(geoRawWindKmh, speedUnit);
+  const geoAlert = geoRawWindKmh >= 25 ? 'Strong winds expected today' : null;
+  const geoCityName = geoWeather?.name || '';
+  const geoIsDefault = geoCityName && geoCityName.toLowerCase() === defaultCity?.toLowerCase();
+  const geoIsFavourite = geoCityName ? favourites.includes(geoCityName) : false;
+  const handleSetGeoDefault = () => {
+    if (!geoCityName) return;
+    onSetDefaultCity(geoCityName);
+  };
+
   if (showFavourites) {
     return (
       <FavouritesPage
@@ -316,13 +373,13 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
         <button
           onClick={handleMyLocation}
           className={`flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border font-semibold transition-colors ${
-            coords?.lat
+            geoCoords?.lat
               ? 'border-green-400 text-green-500 hover:bg-green-400 hover:text-white'
               : 'border-slate-300 text-slate-500 dark:border-gray-600 dark:text-gray-400 hover:border-blue-400 hover:text-blue-500'
           }`}
         >
           <span>📍</span>
-          <span>{geoStatus === 'requesting' ? 'Requesting...' : coords?.lat ? 'My Location' : 'Enable Location'}</span>
+          <span>{geoStatus === 'requesting' ? 'Requesting...' : geoCoords?.lat ? 'My Location' : 'Enable Location'}</span>
         </button>
 
         {/* Favourites */}
@@ -341,6 +398,11 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
       </div>
 
       {/* Geo status messages */}
+      {geoError && !geoCoords?.lat && (
+        <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 text-xs text-amber-700 dark:text-amber-300">
+          {geoError}
+        </div>
+      )}
       {geoStatus === 'denied' && (
         <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 text-xs text-amber-700 dark:text-amber-300">
           <p className="font-bold mb-0.5">Location access denied</p>
@@ -350,6 +412,29 @@ const Locations = ({ defaultCity, onSetDefaultCity, current, loading, error, tem
       {geoStatus === 'unavailable' && (
         <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 text-xs text-red-700 dark:text-red-300">
           Geolocation is not supported by your browser.
+        </div>
+      )}
+
+      {geoCoords?.lat && (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">My Location</p>
+          {geoLoading && <p className="text-sm text-gray-500">Loading...</p>}
+          {!geoLoading && geoErrorMessage && <p className="text-sm text-red-500">{geoErrorMessage}</p>}
+          {!geoLoading && !geoErrorMessage && geoWeather && (
+            <LocationCard
+              name={geoName}
+              temp={geoTemp}
+              tempUnit={tempUnit}
+              windSpeed={geoWindSpeed}
+              speedUnit={speedUnit}
+              condition={geoCondition}
+              alert={geoAlert || undefined}
+              isDefault={geoIsDefault}
+              isFavourite={geoIsFavourite}
+              onSetDefault={handleSetGeoDefault}
+              onToggleFavourite={() => geoCityName && handleToggleFavourite(geoCityName)}
+            />
+          )}
         </div>
       )}
 

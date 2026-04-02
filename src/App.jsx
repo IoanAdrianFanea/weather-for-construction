@@ -6,7 +6,7 @@ import Settings from './pages/Settings';
 import Forecast from './pages/Forecast';
 import { Header } from './components/Header';
 import Layout from './components/Layout';
-import { buildFiveDayForecast, getWeatherByCity, getWeatherByCoords } from './services/openWeather';
+import { buildFiveDayForecast, getWeatherByCity } from './services/openWeather';
 import { ThemeProvider } from './context/ThemeContext';
 import { usePreferences } from './hooks/usePreference';
 import { useGeolocation } from './hooks/useGeolocation';
@@ -17,19 +17,12 @@ function App() {
   const [activeTab, setActiveTab] = useState('weather');
   const { defaultCity, setDefaultCity, tempUnit, setTempUnit, speedUnit, setSpeedUnit, alertsEnabled, setAlertsEnabled } = usePreferences();
   const { coords, error: geoError } = useGeolocation();
-  const [userSetCity, setUserSetCity] = useState(false);
   const [weatherState, setWeatherState] = useState({
     loading: true,
     error: '',
     current: null,
     forecast: [],
   });
-
-  // Wrap setDefaultCity so we know the user explicitly chose a city
-  const handleSetDefaultCity = (city) => {
-    setDefaultCity(city);
-    setUserSetCity(true);
-  };
 
   useEffect(() => {
     let ignore = false;
@@ -38,10 +31,7 @@ function App() {
       setWeatherState((previous) => ({ ...previous, loading: true, error: '' }));
 
       try {
-        const shouldUseCoords = !userSetCity && coords?.lat && coords?.lon;
-        const data = shouldUseCoords
-          ? await getWeatherByCoords(coords.lat, coords.lon)
-          : await getWeatherByCity(defaultCity);
+        const data = await getWeatherByCity(defaultCity);
 
         if (ignore) return;
 
@@ -68,7 +58,7 @@ function App() {
     return () => {
       ignore = true;
     };
-  }, [defaultCity, coords?.lat, coords?.lon, userSetCity]);
+  }, [defaultCity]);
 
   // ── Safety alert notifications + persistent banner ──────────────────────
   const [persistentAlert, setPersistentAlert] = useState(null);
@@ -143,12 +133,14 @@ function App() {
         return (
           <Locations
             defaultCity={defaultCity}
-            onSetDefaultCity={handleSetDefaultCity}
+            onSetDefaultCity={setDefaultCity}
             current={weatherState.current}
             loading={weatherState.loading}
             error={weatherState.error}
             tempUnit={tempUnit}
             speedUnit={speedUnit}
+            coords={coords}
+            geoError={geoError}
           />
         );
       case 'alerts':
